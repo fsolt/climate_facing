@@ -1,0 +1,1793 @@
+---
+format:
+  pdf:
+    number-sections: true
+    papersize: a4
+    keep-tex: false
+    # thanks: ""
+crossref:
+#  sec-prefix: OSM
+  sec-labels: alpha A
+citeproc: false # to make multibib and wordcount work
+filters:
+  - at: pre-render
+    path: "_extensions/pandoc-ext/multibib/multibib.lua"
+  - at: pre-render
+    path: "_extensions/andrewheiss/wordcount/wordcount.lua"
+validate-yaml: false # for multibib to work
+  # - authors-block
+# reference of multibib: https://www.andrewheiss.com/blog/2023/12/11/separate-bibliographies-quarto/
+bibliography:
+  main: climate_facing_main.bib
+  appendix: climate_facing_app.bib
+citation_package: natbib
+tables: true # enable longtable and booktabs
+fontsize: 12pt
+indent: true
+geometry: margin=1in
+linestretch: 1.5 # double spacing using linestretch 1.5
+citecolor: black
+linkcolor: black
+link-citations: true
+execute:
+  echo: false
+  message: false
+  warning: false
+  dpi: 300
+editor_options: 
+  chunk_output_type: console
+title: |
+  | Facing Change Again: 
+  | Meta-Analyses of Gender and 
+  | Climate Change Attitudes Worldwide
+abstract: |
+  As the need to address climate change grows increasingly pressing, so does the need for understanding the factors that undermine public support for mitigation.  One prominent recent analysis of three cross-national surveys argues that people---especially men---in richer countries express less concern for climate change and see more costs and fewer benefits to mitigation, pointing to compensation as a potential solution.  Drawing on hundreds of surveys, this reassessment employs a series of meta-analyses to reveal that while gender differences in climate concern are indeed larger in richer countries, both men and women express more concern in such settings relative to poorer countries, and there is no relationship between economic development and gender differences in mitigation's perceived costs and benefits.  Instead, gender differences in climate concern are mirrored in differences in concern across a wide array of risks, consistent with more widespread masculine performative fearlessness in richer countries.
+keywords:
+  - climate change
+  - public opinion
+  - hegemonic masculinity
+  - risk perceptions
+  - meta-analysis
+editor: 
+  markdown: 
+    wrap: sentence
+---
+
+\pagenumbering{gobble}
+
+# Author {.unnumbered}
+
+\noindent Frederick Solt, ORCID: <https://orcid.org/0000-0002-3154-6132>, Professor, Department of Political Science, University of Iowa, [frederick-solt\@uiowa.edu](mailto:frederick-solt@uiowa.edu){.email}
+
+\pagebreak
+
+```{=tex}
+\renewcommand{\baselinestretch}{1}
+\selectfont
+\maketitle
+\renewcommand{\baselinestretch}{1.5}
+\selectfont
+```
+
+```{=tex}
+\begin{abstract}
+As the need to address climate change grows increasingly pressing, so does the need for understanding the factors that undermine public support for mitigation.  One prominent recent analysis of three cross-national surveys argues that people---especially men---in richer countries express less concern for climate change and see more costs and fewer benefits to mitigation, pointing to compensation as a potential solution.  Drawing on hundreds of surveys, this reassessment employs a series of meta-analyses to reveal that while gender differences in climate concern are indeed larger in richer countries, both men and women express more concern in such settings relative to poorer countries, and there is no relationship between economic development and gender differences in mitigation's perceived costs and benefits.  Instead, gender differences in climate concern are mirrored in differences in concern across a wide array of risks, consistent with more widespread masculine performative fearlessness in richer countries.
+
+\textbf{Keywords:} Climate change, public opinion, hegemonic masculinity, risk perceptions, meta-analysis
+
+\textbf{Word Count:} 4794
+\end{abstract}
+
+```
+\pagebreak
+
+\pagenumbering{arabic}
+
+Climate change and its devastating consequences for humanity have been well understood among scientists for many decades, yet no country has adopted policies commensurate with the scale of the threat.
+Because policymaking to fight climate change depends on public opinion that recognizes the problem [@Bromley-Trujillo2020], identifying the sources of attitudes toward climate change is crucial. 
+One prominent recent article, @Bush2023, builds on findings that women in the United States and Europe express more concern about climate change than men [see, e.g., @Egan2017, 215; @Ergun2024, 9] to advance our understanding of this increasingly pressing issue.
+It makes three claims, each building on the last.
+The first claim is that the gender gap in climate change concern is larger in richer countries than in poorer ones.
+The second is that this wider gap is due to lower levels of concern in richer countries than in poorer countries, levels that are especially low among men.
+The third claim is that these patterns arise because people in richer countries, and especially men, perceive more costs and fewer benefits of policies designed to mitigate climate change.
+Drawing on three cross-sectional surveys and a paired case study of focus groups in Peru and the United States, @Bush2023 finds evidence to support each of these claims.
+
+This reassessment assembles a comprehensive collection of data on climate change attitudes comprising over 3000 national surveys and reexamines these three claims by drawing on meta-analysis tools rarely used in political science.
+This much larger evidentiary base confirms that the difference in climate change concern between men and women is generally larger in richer countries.
+But relatively few surveys show men in richer countries expressing lower levels of climate change concern than men in poorer countries---in fact, consistent with postmaterialist theory [see, e.g., @Inglehart1977; @Inglehart2005; @Inglehart2018], meta-analysis of the available cross-national surveys indicates the opposite is the case.
+Moreover, a meta-analysis of surveys directly asking respondents to assess the costs, benefits, or both of policies fighting climate change show little to no differences between men and women in these attitudes.
+Together, these results suggest that gender norms play a very different role in climate change attitudes than that suggested in @Bush2023, reflecting not greater loss aversion among those with more to lose but instead norms of masculine fearlessness that influence men's responses to a greater degree in richer countries.
+A final meta-analysis of concern across a wide range of different potential threats support this latter argument: from worries about violent crime through anxieties about food and drinking water to fears of identity theft, the gap in expressed levels of concern between women and men is greater in richer countries.
+
+```{r setup, include=FALSE}
+options(tinytex.verbose = TRUE)
+
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = FALSE,
+  dev = "png",
+  dpi = 800,
+  cache = TRUE,
+  fig.width = 7,
+  fig.height = 4,
+  plot = function(x, options) {
+    hook_plot_tex(x, options)
+  }
+)
+
+# If `DCPOtools` is not yet installed:
+
+if (!require(gesisdata))
+  remotes::install_github("fsolt/gesisdata")
+
+# if (!require(psych)) install.packages("psych")
+
+if (!require(cmdstanr)) install.packages("cmdstanr", repos = c('https://stan-dev.r-universe.dev', getOption("repos")))
+
+if (!require(DCPOtools))  remotes::install_github("fsolt/DCPOtools")
+
+if(!require(rstan)) install.packages("rstan", repos = "https://cloud.r-project.org/", dependencies = TRUE)
+
+# if(!require(mvtnorm)) install.packages("mvtnorm", dependencies = TRUE)
+
+if(!require(brms)) install.packages("brms", dependencies = TRUE)
+
+if (!require(pacman)) install.packages("pacman")
+
+library(pacman)
+# load all the packages you will use below 
+p_load(
+  DCPOtools,
+  cmdstanr,
+  tidyverse,
+  here,
+  rio,
+  countrycode,
+  patchwork,
+  ggthemes,
+  ggtext,
+  dotwhisker,
+  imputeTS,
+  rsdmx,
+  osfr,
+  WDI,
+  tabulapdf,
+  brms,
+  bayestestR,
+  tidybayes,
+  future,
+  broom,
+  broom.mixed,
+  repmis,
+  rvest,
+  vroom,
+  tinytable,
+  gt,
+  kableExtra,
+  modelsummary
+) 
+
+```
+
+```{r define_funs}
+# define functions
+survey_setup <- function(vars,
+                         datapath = "../data/dcpo_surveys",
+                         file = "",
+                         chime = TRUE,
+                         survey_additions = NULL,
+                         ...) {
+  if ("data.frame" %in% class(vars)) {
+    vars_table <- vars
+  } else {
+    vars_table <- readr::read_csv(vars, col_types = cols(.default = "c"))
+  }
+  
+  surveys_data <- DCPOtools::surveys_data %>% 
+    left_join(read_csv("data-raw/surveys_female_vars.csv",
+                       col_types = "cc"),
+              by = join_by(survey))
+  
+  dots <- list(...)
+  
+  # loop rather than purrr to avoid reloading datasets (some are big and slow)
+  all_sets <- list()
+  for (i in seq(nrow(vars_table))) {
+    cat(i, " ")
+    v <- vars_table[i, ]
+    ds <- surveys_data[surveys_data$survey==v$survey, ]
+    
+    # Import dataset (if necessary)
+    if (vars_table[["survey"]][i] != c(0, head(vars_table[["survey"]], -1))[i]) {
+      dataset_path <- file.path(datapath,
+                                paste0(ds$archive, "_files"),
+                                paste0(ds$surv_program, "_files"),
+                                ds$file_id)
+      dataset_file <- list.files(path = dataset_path) %>% stringr::str_subset(".RData") %>% last()
+      if (!is.na(ds$subfile)) dataset_file <- paste0(ds$subfile, ".RData") # error message needed: this errors if survey is not included in surveys_data
+      t_data <- rio::import(file.path(dataset_path, dataset_file), trust = TRUE)
+      
+      # Fix column names and make lowercase
+      valid_column_names <- stringr::str_to_lower(names(t_data)) %>%
+        make.names(names = ., unique = TRUE, allow_ = TRUE)
+      names(t_data) <- valid_column_names
+      
+      # Get countries
+      suppressWarnings(
+        t_data$c_dcpo <- if (ds$country_var %in% names(t_data)) {
+          if (is.null(attr(t_data[[ds$country_var]], "labels"))) {
+            if (!is.null(attr(t_data[[ds$country_var]], "value.labels"))) {
+              attr(t_data[[ds$country_var]], "labels") <- attr(t_data[[ds$country_var]],
+                                                               "value.labels") %>% as.numeric()
+              attr(attr(t_data[[ds$country_var]], "labels"), "names") <- attr(attr(t_data[[ds$country_var]],
+                                                                                   "value.labels"), "names")
+            }
+          }
+          t_data[[ds$country_var]] %>%
+            {if (!is.null(attr(t_data[[ds$country_var]], "labels")))
+              labelled::labelled(., attr(., "labels")) %>%
+                labelled::to_factor(levels = "prefixed") %>%
+                forcats::fct_relabel(., function(x) stringr::str_replace(x, "\\[\\d+\\]\\s+", ""))
+              else .} %>%
+            as.character() %>%
+            stringr::str_replace("Haití", "Haiti") %>%
+            stringr::str_replace("Brasil", "Brazil") %>%
+            stringr::str_replace("MÃ©xico", "Mexico") %>%
+            stringr::str_replace("PerÃº", "Peru") %>%
+            stringr::str_replace("PanamÃ¡", "Panama") %>%
+            stringr::str_replace("República Dominicana", "Dominican Republic") %>%
+            stringr::str_replace("Rep\\. Dominicana", "Dominican Republic") %>%
+            {if (!is.na(ds$cc_dict))
+              countrycode(., "orig", "dest", custom_dict = eval(parse(text = ds$cc_dict)))
+              else if (!is.na(ds$cc_origin) & !is.na(ds$cc_match))
+                countrycode(., ds$cc_origin, "country.name", custom_match = eval(parse(text = ds$cc_match)))
+              else if (!is.na(ds$cc_origin))
+                countrycode(., ds$cc_origin, "country.name")
+              else if (!is.na(ds$cc_match))
+                countrycode(., "country.name", "country.name",
+                            custom_match = eval(parse(text = ds$cc_match)))
+              else countrycode(., "country.name", "country.name")}
+        } else ds$country_var %>%
+          countrycode(., "country.name", "country.name")
+      )
+      if (ds$survey == "wvs4_swe") {
+        t_data <- labelled::remove_labels(t_data)
+        t_data <- t_data %>%
+          dplyr::filter(c_dcpo == "Sweden")
+      }
+      if (ds$survey == "wvs6_bahrain") {
+        t_data <- labelled::remove_labels(t_data)
+        t_data <- t_data %>%
+          dplyr::filter(c_dcpo == "Bahrain")
+      }
+      if (ds$survey == "tcmeg2004") {
+        t_data <- t_data %>%
+          dplyr::filter(msurvey == 2)
+      }
+      if (ds$survey == "cdcee") {
+        t_data <- t_data %>%
+          dplyr::filter(!v3 == 16)
+      }
+      if (ds$survey == "pew2002") {
+        t_data <- t_data %>%
+          dplyr::filter(!country %in% c(1, 4, 5, 8, 11, 15, 16, 17,
+                                        18, 9, 23, 27, 32, 42, 43))
+        # urban-heavy samples: c("Angola", "Bolivia", "Brazil", "China", "Egypt", "Guatemala", "Honduras", "India", "Indonesia", "Côte d’Ivoire", "Mali", "Pakistan", "Senegal", "Venezuela", "Vietnam")
+      }
+      if (ds$survey == "pew2005_6") {
+        t_data <- t_data %>%
+          dplyr::filter(!country %in% c(10, 12))
+        # urban-heavy samples: c("Morocco", "Pakistan")
+      }
+      if (ds$survey == "pew2005_11") {
+        t_data <- t_data %>%
+          dplyr::filter(!country %in% c(3, 6))
+        # urban-heavy samples: c("China", "India")
+      }
+      if (ds$country_var %in% names(t_data)) {
+        t_data <- t_data %>%
+          mutate(c_dcpo = if_else(!is.na(c_dcpo), c_dcpo, as.character(.data[[ds$country_var]])))
+      }
+      
+      # Get years
+      t_data$y_dcpo <- if (!is.na(ds$year_dict)) { # if there's a year dictionary...
+        if (!is.na(ds$year_var)) { # if there's a year variable
+          t_data[[ds$year_var]] %>%
+            labelled::labelled(., attr(., "labels")) %>%
+            labelled::to_factor(levels = "labels") %>%
+            as.character() %>%
+            countrycode("orig", "year", custom_dict = eval(parse(text = ds$year_dict)), warn = FALSE)
+        } else { # no year variable
+          t_data[[ds$country_var]] %>%
+            labelled::labelled(., attr(., "labels")) %>%
+            labelled::to_factor(levels = "labels") %>%
+            as.character() %>%
+            countrycode("orig", "year", custom_dict = eval(parse(text = ds$year_dict)), warn = FALSE)
+        }
+      } else if (!is.na(ds$year_var)) { # if there's a year variable...
+        if (length(unique(t_data$c_dcpo))==1) { # single-country study
+          t_data[[ds$year_var]]
+        } else if (stringr::str_detect(ds$survey, "ess")) {
+          if ("inwyr" %in% names(t_data)) {
+            t_data %>%
+              group_by(c_dcpo) %>%
+              mutate(year = ifelse(!is.na(inwyr) & !inwyr==9999, inwyr, 2000 + essround * 2),
+                     y_dcpo = round(mean(year, na.rm = TRUE))) %>%
+              ungroup() %>%
+              .[["y_dcpo"]]
+          } else if ("inwyys" %in% names(t_data)) {
+            t_data %>%
+              group_by(c_dcpo) %>%
+              mutate(year = ifelse(!is.na(inwyys) & !inwyys==9999, inwyys, 2000 + essround * 2),
+                     y_dcpo = round(mean(year, na.rm = TRUE))) %>%
+              ungroup() %>%
+              .[["y_dcpo"]]
+          } else if ("inwde" %in% names(t_data)) {
+            t_data %>%
+              group_by(c_dcpo) %>%
+              mutate(year = lubridate::year(inwde),
+                     y_dcpo = round(mean(year, na.rm = TRUE))) %>%
+              ungroup() %>%
+              .[["y_dcpo"]]
+          }
+        } else if (ds$survey == "cdcee" | ds$survey == "eqls_combo") {
+          suppressWarnings(
+            t_data[[ds$year_var]] %>%
+              labelled::labelled(., attr(., "labels")) %>%
+              labelled::to_character(levels = "prefixed") %>%
+              stringr::str_extract("\\d{4}")
+          )
+        } else if (ds$survey %in% c("amb_combo", "wrp19_21")) {
+          t_data[[ds$year_var]]
+        } else if (ds$survey == "neb_combo") {
+          floor(t_data[[ds$year_var]])
+        } else if (ds$survey == "ndb_combo") {
+          case_when(t_data[[ds$year_var]] == 1 ~ 1991,
+                    t_data[[ds$year_var]] == 2 ~ 1992,
+                    t_data[[ds$year_var]] == 3 ~ 1994,
+                    t_data[[ds$year_var]] == 4 ~ 1996,
+                    t_data[[ds$year_var]] == 5 ~ 1998)
+        } else if (ds$surv_program == "afrob" |   # single-wave cross-national surveys
+                   ds$survey == "arabb3" |        # with interviews bleeding over years
+                   ds$survey == "asianb3") {
+          t_data %>%
+            mutate(year = lubridate::year(t_data[[ds$year_var]]),
+                   modal_year = as.integer(names(table(year)[table(year)==max(table(year))])),
+                   year = if_else(is.na(year) | year < 1950,
+                                  modal_year,
+                                  as.integer(year)),
+                   group_dcpo = c_dcpo) %>%
+            group_by(c_dcpo) %>%
+            mutate(y_dcpo = round(mean(year))) %>%
+            ungroup() %>%
+            .[["y_dcpo"]]
+        } else { # cross-national surveys with interviews bleeding over years
+          t_data %>%
+            mutate(modal_year = as.integer(names(table(t_data[[ds$year_var]])[table(t_data[[ds$year_var]])==max(table(t_data[[ds$year_var]]))])),
+                   year = if_else(between(as.numeric(t_data[[ds$year_var]]),
+                                          1950, as.numeric(lubridate::year(Sys.Date()))),
+                                  as.integer(t_data[[ds$year_var]]),
+                                  modal_year),
+                   group_dcpo = c_dcpo) %>%
+            {if (!is.na(ds$cy_var))
+              mutate(., group_dcpo = t_data[[ds$cy_var]])
+              else .} %>%
+            group_by(group_dcpo) %>%
+            mutate(y_dcpo = round(mean(year))) %>%
+            ungroup() %>%
+            .[["y_dcpo"]]
+        }
+      } else as.numeric(ds$year)
+      t_data$y_dcpo <- as.numeric(t_data$y_dcpo)
+      t_data <- t_data %>%
+        filter(!is.na(y_dcpo))
+      
+      # Get weights
+      if (!is.na(ds$wt) & !all(is.na(ds$wt))) {
+        if (length(unlist(strsplit(ds$wt, split = " "))) == 1) {
+          wt <- as.numeric(with(t_data, get(ds$wt)))
+        } else eval(parse(text = ds$wt))
+        t_data$wt_dcpo <- wt
+        t_data <- t_data %>%
+          dplyr::group_by(c_dcpo, y_dcpo) %>%
+          dplyr::mutate(wt_dcpo = wt_dcpo/mean(wt_dcpo, na.rm = TRUE)) %>%
+          ungroup()
+        t_data$wt_dcpo[is.na(t_data$wt_dcpo)] <- 1
+        rm(wt)
+      } else t_data$wt_dcpo <- 1
+    }
+    
+    # Get variable of interest
+    if (length(unlist(strsplit(v$variable, split = " "))) == 1) {
+      t_data$target <- with(t_data, as.numeric(get(v$variable) %>% stringr::str_trim()))
+    } else {
+      t_data <- t_data %>%
+        mutate(target = eval(parse(text = v$variable)))
+    }
+    if (length(unlist(strsplit(v$values, split = ";"))) > 1) {
+      vals <- eval(parse(text = unlist(strsplit(v$values, split = ";"))[[1]]))
+      t_data$target <- eval(parse(text = unlist(strsplit(v$values, split = ";"))[[2]]))
+    } else {
+      vals <- eval(parse(text = v$values))
+    }
+    if (!exists("include_nonresponses", where = dots)) {
+      t_data$target <- if_else(t_data$target %in% vals, t_data$target, NA_real_)
+      options(warn = 2)
+      t_data$target <- do.call(dplyr::recode, c(list(t_data$target), setNames(1:length(vals), vals)))
+      options(warn = 0)
+    } else {
+      if (dots$include_nonresponses) {
+        na_vals <- eval(parse(text = v$nonresponses))
+        t_data$target0 <- t_data$target
+        t_data$target <- if_else(t_data$target %in% c(vals, na_vals), t_data$target, NA_real_)
+        options(warn = 2)
+        t_data$target <- do.call(dplyr::recode, c(list(t_data$target), setNames(c(rep(-1,length(na_vals)), 1:length(vals)), c(na_vals, vals))))
+        if (all(t_data$target0 %in% c(na_vals) == FALSE)) {
+          t_data <- t_data %>%
+            mutate(target = if_else(is.na(target), -1, target))
+        }
+        t_data <- t_data %>%
+          select(-target0)
+        options(warn = 0)
+      } else {
+        t_data$target <- if_else(t_data$target %in% vals, t_data$target, NA_real_)
+        options(warn = 2)
+        t_data$target <- do.call(dplyr::recode, c(list(t_data$target), setNames(1:length(vals), vals)))
+        options(warn = 0)
+      }
+    }
+    
+    # Create female variable
+    t_data$female <- with(t_data, eval(parse(text = ds$female_var)))
+    
+    # Report variables of interest
+    vars1 <- t_data %>%
+      dplyr::select(c_dcpo, y_dcpo, wt_dcpo, target, female) %>%
+      filter(!is.na(target)) %>%
+      transmute(country = c_dcpo,
+                year = y_dcpo,
+                survey = v$survey,
+                item = v$item,
+                value = target - 1,
+                female,
+                weight = wt_dcpo)
+    all_sets[[i]] <- vars1
+    rm(vars1)
+  }
+  
+  suppressWarnings(
+    all_data <- bind_rows(all_sets)
+  )
+  rm(list = c("t_data", "ds", "v"))
+  
+  if(file!="") {
+    rio::export(all_data, file = file)
+  }
+  
+  return(all_data)
+  
+  # Chime
+  if(chime) {
+    beepr::beep()
+  }
+  
+}
+
+corr_weighted <- function(data_df) {
+  cov.wt(data_df %>% select(value, female),
+         data_df %>% pull(weight),
+         cor = TRUE) %>% 
+    last() %>% 
+    `[`(1,2) %>%
+    first()
+}
+
+pred_prob <- function(m, var1, var2, var2_vals, sims = 1000, ci = .95,
+                      point = FALSE, ercolor = NA, esize = .5, ralpha = .5, rfill = "grey70", stats_cp = "none", txt_caption = NULL) {
+  m_class <- class(m)
+  m_sims <- arm::sim(m, sims)
+  
+  df <- data.frame(m@frame) %>% 
+    select(-any_of(c("country", "year", "cy")))
+  df_temp <- select(df, 1) # save the dependent variable separately
+  df <- df %>%
+    select(-1) %>% 
+    map(as.numeric)
+  
+  var12 <- paste0(var2, ":", var1)
+  if (!var12 %in% unlist(dimnames(m@pp$X)[2]))
+    var12 <- paste0(var1, ":", var2)
+  
+  xmin <- min(m@frame[var2], na.rm = T)
+  xmax <- max(m@frame[var2], na.rm = T)
+  steps <- 100
+  
+  for (i in seq(df)) { 
+    # use for loop to avoid the difficulty of flatting list containing vectors and matrices
+    if (!is.data.frame(df[[i]])) {
+      # keep track the var names
+      namesUpdate <- c(names(df_temp), names(df)[[i]])
+      df_temp <- cbind(df_temp, df[[i]])
+      names(df_temp) <- namesUpdate
+    } else {
+      df_temp <- cbind(df_temp, df[[i]])
+    }
+  }
+  
+  df <- df_temp
+  names(df)[1] <- "(Intercept)" # replace DV with intercept
+  df$`(Intercept)` <- 1
+  
+  iv_medians <- summarize_all(df, ~ median(.x, na.rm = TRUE))
+  
+  fake_data <- iv_medians[rep(1:nrow(iv_medians), each=steps*length(var2_vals)), ] 
+  fake_data[[var1]] <- with(df, rep(seq(min(get(var1)), max(get(var1)), length.out=steps),
+                                    steps=length(var2_vals)))
+  fake_data[[var2]] <- rep(var2_vals, each=steps)
+  fake_data[[var12]] <- fake_data[[var1]] * fake_data[[var2]]
+  fake_data <- fake_data %>% 
+    select(all_of(attr(m_sims@fixef, "dimnames")[[2]]))
+  
+  pp <- rowMeans(plogis(data.matrix(fake_data) %*% t(data.matrix(m_sims@fixef))))
+  row_quantiles <- function (x, probs) {
+    naValue <- NA
+    storage.mode(naValue) <- storage.mode(x)
+    nrow <- nrow(x)
+    q <- matrix(naValue, nrow = nrow, ncol = length(probs))
+    if (nrow > 0L) {
+      t <- quantile(x[1L, ], probs = probs)
+      colnames(q) <- names(t)
+      q[1L, ] <- t
+      if (nrow >= 2L) {
+        for (rr in 2:nrow) {
+          q[rr, ] <- quantile(x[rr, ], probs = probs)
+        }
+      }
+    }
+    else {
+      t <- quantile(0, probs = probs)
+      colnames(q) <- names(t)
+    }
+    q <- drop(q)
+    q
+  }
+  pp_bounds <- row_quantiles(plogis(data.matrix(fake_data) %*% t(data.matrix(m_sims@fixef))), prob = c((1 - ci)/2, 1 - (1 - ci)/2))
+  pp <- cbind(pp, pp_bounds)
+  pp <- pp*100
+  colnames(pp) <- c("coef1", "lb", "ub")
+  pp <- cbind(fake_data[, c(var1, var2)], pp)
+  
+  
+  pp[,var2] <- as.factor(pp[,var2])
+  
+  names(pp)[1] <- "fake"
+  names(pp)[2] <- "value"
+  
+  coef <- pp
+  
+  min_sim <- m_sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+    xmin * m_sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))] # simulation of the value at the minimum value of the conditioning variable
+  max_sim <- m_sims@fixef[, match(var1, unlist(dimnames(m@pp$X)[2]))] + 
+    xmax * m_sims@fixef[, match(var12, unlist(dimnames(m@pp$X)[2]))] # simulation of the value at the maximum value of the conditioning variable
+  diff <- max_sim - min_sim # calculating the difference
+  ci_diff <- c(
+    quantile(diff, (1 - ci) / 2),
+    quantile(diff, 1 - (1 - ci) / 2)
+  ) # confidence intervals of the difference
+  
+  interplot:::interplot.plot(m = coef, steps = steps, predPro = TRUE,
+                             var2_vals = var2_vals, point = point,
+                             ercolor = ercolor, esize = esize,
+                             ralpha = ralpha, rfill = rfill,
+                             stats_cp = "none", txt_caption = NULL)
+  
+}
+
+extract_gdppc_results_mf <- function(file_path) {
+  cca_m <- rio::import(file_path, trust = TRUE) %>% 
+    mutate(tidied = map(fit, tidy),
+           model = "fit_m") %>%
+    unnest(tidied) %>% 
+    filter(term == "log_gdppc")
+  
+  cca_f <- cca_m %>%
+    select(year:fit) %>% 
+    mutate(fit_f = map(fit,
+                       ~spread_draws(.x, b_log_gdppc,
+                                     `b_female:log_gdppc`) %>%
+                         mutate(b_log_gdppc_f = b_log_gdppc +
+                                  `b_female:log_gdppc`) %>%
+                         summarize(term = "log_gdppc",
+                                   estimate = mean(b_log_gdppc_f),
+                                   std.error = sd(b_log_gdppc_f)))) %>%
+    unnest(fit_f) %>% 
+    mutate(model = "fit_f")
+  
+  cca <- bind_rows(cca_m, cca_f) %>% 
+    select(-data_df, -fit)
+  
+  return(cca)
+}
+
+extract_gdppc_results_a <- function(file_path) {
+  cca_a <- rio::import(file_path, trust = TRUE) %>% 
+    mutate(tidied = map(fit, tidy),
+           model = "fit_a") %>%
+    unnest(tidied) %>% 
+    filter(term == "log_gdppc") %>% 
+    select(-data_df, -fit)
+  
+  return(cca_a)
+}
+
+set.seed(324)
+```
+
+```{r data_prep, eval=FALSE}
+surveys_cc1 <- read_csv(here("data-raw",
+                             "surveys_cc1.csv"),
+                        col_types = "ccccccccc")
+
+all_data <- survey_setup(surveys_cc1, file = here("data",
+                                                  "all_data.csv"))
+
+all_data <- read_csv(here("data",
+                          "all_data.csv"),
+                     col_types = "cdccdddd")
+
+# https://dataverse.nl/file.xhtml?fileId=421303&version=1.0
+
+maddison_gdppc <- haven::read_dta("data-raw/maddison2023_web.dta") %>%
+  transmute(country = countrycode(countrycode,
+                                  origin = "iso3c",
+                                  destination = "country.name",
+                                  warn = FALSE),
+            year,
+            gdppc) %>%
+  filter(!is.na(gdppc))
+
+wdi_gdppc <- WDI::WDI(indicator = c("gdppc" = "NY.GDP.PCAP.KD"),
+                      start = 1980) %>% 
+  transmute(country = countrycode(iso3c,
+                                  origin = "wb",
+                                  destination = "country.name",
+                                  warn = FALSE),
+            iso3c,
+            year,
+            gdppc) %>%
+  filter(!is.na(gdppc) & !is.na(country)) %>% 
+  full_join(maddison_gdppc, by = join_by("country", "year")) %>% 
+  filter(year > 1980) %>% 
+  transmute(country,
+            year,
+            gdppc = coalesce(gdppc.x, gdppc.y)) %>% 
+  group_by(country) %>% 
+  group_modify(~ add_row(.x, year = 2024)) %>% 
+  mutate(gdppc = if_else(year == 2024, lag(gdppc), gdppc),
+         log_gdppc = log(gdppc))
+
+all_data2 <- read_csv(here("data",
+                           "all_data.csv"),
+                      col_types = "cdccdddd") %>% 
+  left_join(read_csv("data-raw/surveys_cc1.csv",
+                     col_types = "ccccccccc") %>% 
+              distinct(survey, item, item_category),
+            by = join_by(survey, item)) %>% 
+  left_join(wdi_gdppc,
+            by = join_by(country, year)) %>% 
+  mutate(survey2 = if_else(str_detect(survey, "amb_"),
+                           paste0("amb_", year),
+                           survey)) %>%
+  group_by(country, year, survey, item) %>% 
+  mutate(values = length(names(table(value)))) %>% 
+  ungroup() %>% 
+  filter(values > 1 & complete.cases(.)) %>% 
+  select(-values)
+
+saveRDS(all_data2, here("data",
+                        "all_data2.rds"))
+
+surveys_risk <- read_csv("data-raw/surveys_risk.csv",
+                         col_types = "ccccccccc")
+
+all_data_risk <- survey_setup(surveys_risk, file = here("data",
+                                                        "all_data_risk.csv"))
+
+all_data_risk <- read_csv(here("data",
+                               "all_data_risk.csv"),
+                          col_types = "cdccdddd")
+
+all_data_risk2 <- read_csv(here("data",
+                                "all_data_risk.csv"),
+                           col_types = "cdccdddd") %>% 
+  left_join(read_csv("data-raw/surveys_risk.csv",
+                     col_types = "ccccccccc") %>% 
+              distinct(survey, item, item_category),
+            by = join_by(survey, item)) %>% 
+  left_join(wdi_gdppc,
+            by = join_by(country, year)) %>% 
+  mutate(survey2 = if_else(str_detect(survey, "amb_"),
+                           paste0("amb_", year),
+                           survey)) %>%
+  group_by(country, year, survey, item) %>% 
+  mutate(values = length(names(table(value)))) %>% 
+  ungroup() %>% 
+  select(-item_category) %>% 
+  filter(values > 1 & complete.cases(.)) %>% 
+  select(-values)
+
+saveRDS(all_data_risk2, here("data",
+                             "all_data_risk2.rds"))
+```
+
+```{r cca_by_survey2, eval=FALSE}
+all_data2 <- rio::import(here("data",
+                              "all_data2.rds"),
+                         trust = TRUE)
+
+cca_by_country <- all_data2 %>%
+  nest(data_df = c(value, female, weight)) %>% 
+  mutate(fem_cca_r = map_dbl(data_df, corr_weighted),
+         z_r = .5*log((1+fem_cca_r)/(1-fem_cca_r)),
+         n_r = map_dbl(data_df, nrow),
+         v_zr = 1/(n_r-3),
+         se_zr = sqrt(v_zr))
+
+rio::export(cca_by_country, here("data",
+                                 "cca_by_country.rds"))
+
+cca_by_survey20 <- all_data2 %>%
+  filter(as.numeric(str_extract(item, "\\d+$")) == 2 &
+           complete.cases(.) &
+           length(names(table(.$country))) >= 10) %>% 
+  group_by(country, year, survey2, item, .drop = FALSE) %>% 
+  mutate(values = length(names(table(value)))) %>% 
+  ungroup() %>% 
+  filter(values > 1) %>% 
+  select(-values) %>%
+  group_by(survey2, item) %>% 
+  mutate(n_country = n_distinct(country),
+         year = round(mean(year)),
+         male = 1 - female) %>% 
+  filter(n_country >= 10) %>% 
+  nest(data_df = c(country, value, female, male,
+                   gdppc, log_gdppc, weight)) %>%
+  mutate(fit_a = map(data_df, ~ lme4::glmer(value ~ female +
+                                              log_gdppc +
+                                              (1 + female|country), 
+                                            data = .x, 
+                                            family = "binomial",
+                                            weights = weight)),
+         fit_m = map(data_df, ~ lme4::glmer(value ~ female*log_gdppc +
+                                              (1 + female|country), 
+                                            data = .x, 
+                                            family = "binomial",
+                                            weights = weight)),
+         fit_f = map(data_df, ~ lme4::glmer(value ~ male*log_gdppc +
+                                              (1 + male|country), 
+                                            data = .x, 
+                                            family = "binomial",
+                                            weights = weight)),
+         tidied_a = map(fit_a, tidy),
+         tidied_m = map(fit_m, tidy),
+         tidied_f = map(fit_f, tidy))
+
+cca_by_survey2_a <- cca_by_survey20 %>% 
+  unnest(tidied_a, names_sep = "_") %>% 
+  rename_with(~str_replace(., "tidied_([afm])_(.*)", "\\2")) %>% 
+  mutate(model = "fit_a")
+
+cca_by_survey2_m <- cca_by_survey20 %>% 
+  unnest(tidied_m, names_sep = "_") %>% 
+  rename_with(~str_replace(., "tidied_([afm])_(.*)", "\\2")) %>% 
+  mutate(model = "fit_m")
+
+cca_by_survey2_f <- cca_by_survey20 %>% 
+  unnest(tidied_f, names_sep = "_") %>% 
+  rename_with(~str_replace(., "tidied_([afm])_(.*)", "\\2")) %>% 
+  mutate(model = "fit_f")
+
+cca_by_survey2 <- bind_rows(cca_by_survey2_a,
+                            cca_by_survey2_m,
+                            cca_by_survey2_f)
+
+rio::export(cca_by_survey2, here("data",
+                                 "cca_by_survey2.rds"))
+
+all_data_risk2 <- rio::import(here("data",
+                                   "all_data_risk2.rds"),
+                              trust = TRUE)
+
+risk_by_country <- all_data_risk2 %>%
+  nest(data_df = c(value, female, weight)) %>% 
+  mutate(fem_cca_r = map_dbl(data_df, corr_weighted),
+         z_r = .5*log((1+fem_cca_r)/(1-fem_cca_r)),
+         n_r = map_dbl(data_df, nrow),
+         v_zr = 1/(n_r-3),
+         se_zr = sqrt(v_zr))
+
+rio::export(risk_by_country, here("data",
+                                  "risk_by_country.rds"))
+```
+
+```{r cca_by_survey_ord, eval=FALSE}
+cca_by_survey_ord0 <- all_data2 %>%
+  filter(between(as.numeric(str_extract(item, "\\d+$")), 3, 4) &
+           complete.cases(.) &
+           length(names(table(.$country))) >= 10) %>% 
+  group_by(country, year, survey2, item, .drop = FALSE) %>% 
+  mutate(values = length(names(table(value)))) %>% 
+  ungroup() %>% 
+  filter(values > 1) %>% 
+  select(-values, -survey) %>%
+  group_by(survey2, item) %>% 
+  mutate(n_country = n_distinct(country),
+         year = round(mean(year)),
+         value = value + 1) %>% # values must be positive
+  filter(n_country >= 10) %>% 
+  nest(data_df = c(country, value, female, gdppc, log_gdppc, weight)) %>% 
+  ungroup() %>% 
+  mutate(fold = ceiling(row_number()/5))
+
+rio::export(cca_by_survey_ord0, here("data",
+                                     "cca_by_survey_ord0.rds"))
+
+# the following code is for reference; actually executed via HPC in 40 chunks
+cca_by_survey_ord_m <- cca_by_survey_ord0 %>%
+  mutate(fit = map(data_df, 
+                   ~ brms::brm(value | weights(weight) ~
+                                 female*log_gdppc +
+                                 (1 + female|country),
+                               data = .x,
+                               family = cumulative(),
+                               chains = 3,
+                               cores = 3,
+                               iter = 400,
+                               seed = 324)),
+         tidied = map(fit, tidy)) %>%
+  unnest(tidied)
+
+# the following code is for reference; actually executed via HPC in 40 chunks
+cca_by_survey_ord_all <- cca_by_survey_ord0 %>%
+  mutate(fit = map(data_df, 
+                   ~ brms::brm(value | weights(weight) ~
+                                 female + log_gdppc +
+                                 (1 + female|country),
+                               data = .x,
+                               family = cumulative(),
+                               chains = 3,
+                               cores = 3,
+                               iter = 400,
+                               seed = 324)),
+         tidied = map(fit, tidy)) %>%
+  unnest(tidied)
+
+# assembling the 40 HPC-generated 'interaction' files
+interaction_files <- list.files(here::here("data", "interaction"),
+                                pattern = "cca_by_survey_fold_\\d+.rda",
+                                full.names = TRUE)
+
+cca_by_survey_ord_mf <- map(interaction_files,
+                            extract_gdppc_results_mf) %>% 
+  list_rbind()
+
+# assembling 40 HPC-generated 'no interaction' files
+no_interaction_files <- list.files(here::here("data", "all"),
+                                   pattern = "cca_by_survey_all_fold_\\d+.rda",
+                                   full.names = TRUE)
+
+cca_by_survey_ord_a <- map(no_interaction_files,
+                           extract_gdppc_results_a) %>% 
+  list_rbind()
+
+# finally, pull the results together
+cca_by_survey_ord <- bind_rows(cca_by_survey_ord_mf,
+                               cca_by_survey_ord_a)
+
+rio::export(cca_by_survey_ord, here("data",
+                                    "cca_by_survey_ord.rds"))
+```
+
+```{r cca_by_survey_cont, eval=FALSE}
+cca_by_survey_cont0 <- all_data2 %>%
+  filter(as.numeric(str_extract(item, "\\d+$")) >= 5 &
+           complete.cases(.)) %>% 
+  select(-survey) %>% 
+  group_by(country, year, survey2, item, .drop = FALSE) %>% 
+  mutate(values = length(names(table(value)))) %>% 
+  ungroup() %>% 
+  filter(values > 1) %>% 
+  select(-values) %>% 
+  group_by(survey2, item) %>% 
+  mutate(n_country = n_distinct(country),
+         year = round(mean(year)),
+         male = 1 - female) %>% 
+  filter(n_country >= 10) %>% 
+  nest(data_df = c(country, value, female, male,
+                   gdppc, log_gdppc, weight)) %>%
+  mutate(fit_a = map(data_df, ~ lme4::lmer(value ~ female + log_gdppc +
+                                             (1 + female|country), 
+                                           data = .x, 
+                                           weights = weight)),
+         fit_m = map(data_df, ~ lme4::lmer(value ~ female*log_gdppc +
+                                             (1 + female|country), 
+                                           data = .x, 
+                                           weights = weight)),
+         fit_f = map(data_df, ~ lme4::lmer(value ~ male*log_gdppc +
+                                             (1 + male|country), 
+                                           data = .x, 
+                                           weights = weight)),
+         tidied_a = map(fit_a, tidy),
+         tidied_m = map(fit_m, tidy),
+         tidied_f = map(fit_f, tidy))
+
+cca_by_survey_cont_a <- cca_by_survey_cont0 %>% 
+  unnest(tidied_a, names_sep = "_") %>% 
+  rename_with(~str_replace(., "tidied_([afm])_(.*)", "\\2")) %>% 
+  mutate(model = "fit_a")
+
+cca_by_survey_cont_m <- cca_by_survey_cont0 %>% 
+  unnest(tidied_m, names_sep = "_") %>% 
+  rename_with(~str_replace(., "tidied_([afm])_(.*)", "\\2")) %>% 
+  mutate(model = "fit_m")
+
+cca_by_survey_cont_f <- cca_by_survey_cont0 %>% 
+  unnest(tidied_f, names_sep = "_") %>% 
+  rename_with(~str_replace(., "tidied_([afm])_(.*)", "\\2")) %>% 
+  mutate(model = "fit_f")
+
+cca_by_survey_cont <- bind_rows(cca_by_survey_cont_a,
+                                cca_by_survey_cont_m,
+                                cca_by_survey_cont_f) %>% 
+  select(-data_df, 
+         -starts_with("fit"),
+         -starts_with("tidied"))
+
+rio::export(cca_by_survey_cont, here("data",
+                                     "cca_by_survey_cont.rds"))
+
+```
+
+```{r cca_by_survey, eval=FALSE}
+cca_by_country <- rio::import(here::here("data",
+                                         "cca_by_country.rds"),
+                              trust = TRUE)
+
+cca_by_survey2 <- rio::import(here("data",
+                                   "cca_by_survey2.rds"),
+                              trust=TRUE)
+
+cca_by_survey_ord <- rio::import(here("data",
+                                      "cca_by_survey_ord.rds"),
+                                 trust=TRUE)
+
+cca_by_survey_cont <- rio::import(here("data",
+                                       "cca_by_survey_cont.rds"),
+                                  trust=TRUE)
+
+cca_by_survey <- cca_by_survey2 %>%
+  bind_rows(cca_by_survey_ord) %>%
+  bind_rows(cca_by_survey_cont) %>% 
+  select(-data_df, 
+         -starts_with("fit"),
+         -starts_with("tidied")) %>% 
+  mutate(model = factor(model, 
+                        levels = paste0("fit_", c("m", "f", "a")),
+                        labels = c("Men",
+                                   "Women",
+                                   "All Respondents")),
+         statistic = estimate/std.error)
+
+rio::export(cca_by_survey, here("data",
+                                "cca_by_survey.rds"))
+```
+
+# Gender Differences in Climate Change Concern
+
+The first of the three claims made in @Bush2023 [, 592] has to do with "variation in the climate gender gap."
+Specifically, it holds that the difference between women and men in climate change concern is larger in richer countries than in poorer ones.
+@Bush2023 supports this claim with analyses of one item on climate concern from each of the 2016/2017 AmericasBarometer (which includes 29 countries), the 2015 Pew Global Attitudes Survey (40 countries), and a ten-country survey conducted by the work's authors in 2019-2020.
+
+This evidence, however, represents only a tiny fraction of the available surveys that asked respondents questions on how concerned they are about climate change.
+Given the importance of the topic, it should not come as a surprise that questions on climate concern have been included in many cross-national surveys, including not only four waves of the AmericasBarometer and seven Pew Global Attitudes Surveys, but also such well-known surveys as the Arab Barometer, the Eurobarometer, and the World Values Survey.
+In fact, 103 different surveys that asked 74 different items on concern for climate change were identified (details on these survey questions are available in the online supplemental materials).
+
+The large number and wide variety of these survey items makes collective analysis difficult.
+A long literature on question wording effects cautions against simply pooling even such similar questions as "How concerned are you about climate change?" (asked in the Life in Transition Survey, Wave 2) and "How concerned are you, if at all, that global climate change will harm you personally at some point in your lifetime?" (asked in the 2015 Pew Global Attitudes Survey) together in a single analysis [see, e.g., @Rugg1941; @Krosnick2014; @Solt2016].
+Recent contributions to the study of comparative public opinion have dealt with the issue of incomparability across survey items by estimating latent variables [see, e.g., @Claassen2020a; @Woo2023].
+These methods, however, typically generate measures at the country-year level and so prevent examination of individual-level variables like gender [but see @Caughey2019]. 
+
+Meta-analysis supplies a different approach to resolving this problem.
+Although infrequently used in political science, meta-analysis provides a tool to "consolidate the overall effect size" across many analyses, although more typically the analyses to be consolidated are those presented in many different articles [@Godefroidt2023, 25; see also @Schmid2020a].
+Here the cross-national surveys on climate concern are broken into their separate national components, yielding a total of 2,821 national surveys.
+These surveys often include multiple items tapping concern for climate change and thus provide multiple opportunities to observe the relationship between gender and climate concern; there are 6,090 of these opportunities in total.
+In the language of meta-analysis, the analysis realized from each of these opportunities is a study.
+
+Correlation coefficients are frequently used in meta-analysis to bring results from different and otherwise incomparable analyses onto a common scale; because the sampling distribution of correlations is skewed, the Fisher's _z_ transformation is applied to each correlation to yield a normal distribution of effect sizes [see @Schmid2020a, 35; @Godefroidt2023, 25].
+Therefore, each study here consists of the _z_-transformed correlation of the individual-level indicator variable for a woman respondent with one survey item of climate concern in one country-year.
+
+```{r meta-analyses}
+risk_by_country <- rio::import(here("data",
+                                    "risk_by_country.rds"))
+
+concern_m1 <- cca_by_country %>%
+  filter(item_category == "concern") %>% 
+  brm(bf(z_r | se(se_zr) ~ 
+           log_gdppc +
+           (1 |country + survey2 + item)),
+      data = .,
+      cores = 4,
+      iter = 800,
+      backend = "cmdstanr",
+      control = list(adapt_delta = 0.99, 
+                     max_treedepth = 20),
+      file = here("data", "concern_m1"))
+
+benefit_cost_m1 <- cca_by_country %>%
+  filter(str_detect(item_category, "cost|benefit") & !is.na(gdppc)) %>%
+  brm(bf(z_r | se(se_zr) ~
+           log_gdppc +
+           (1 |country + survey2 + item)),
+      data = .,
+      cores = 4,
+      iter = 2000,
+      backend = "cmdstanr",
+      control = list(adapt_delta = 0.99, 
+                     max_treedepth = 20),
+      file = here("data", "benefit_costs_m1"))
+
+risk_m1 <- risk_by_country %>%
+  brm(bf(z_r | se(se_zr) ~ 
+           log_gdppc +
+           (1 |country + survey2 + item)),
+      data = .,
+      cores = 4,
+      iter = 800,
+      backend = "cmdstanr",
+      control = list(adapt_delta = 0.99, 
+                     max_treedepth = 20),
+      file = here("data", "risk_m1"))
+```
+
+```{r}
+#| label: fig-concern
+#| fig-cap: "In Richer Countries, Women Generally Express More Concern Than Men About Climate Change"
+#| fig-height: 4
+
+cca_by_country <- rio::import(here("data",
+                                   "cca_by_country.rds"),
+                              trust = TRUE)
+
+n_c <- cca_by_country %>%
+  filter(str_detect(item_category, "concern")) %>% 
+  distinct(country, year, survey2) %>% 
+  nrow() %>%
+  format(big.mark = ",", scientific = FALSE)
+
+c_plot <- cca_by_country %>%
+  filter(str_detect(item_category, "concern")) %>%
+  mutate(dv = case_when(str_detect(item_category, "concern") ~
+                          "Correlation of Women\n& Climate Change Concern")) %>% 
+  ggplot(aes(x = log_gdppc, y = z_r)) +
+  facet_wrap(dv ~ .,
+             ncol = 1,
+             strip.position = "left") +
+  geom_segment(aes(x = log_gdppc, xend = log_gdppc,
+                   y = z_r - 1.96*se_zr, yend = z_r + 1.96*se_zr),
+               na.rm = TRUE,
+               alpha = .05) +
+  geom_point(size = 1, alpha = .05) +
+  geom_smooth(method = 'lm',
+              formula = 'y ~ x',
+              se = FALSE) +
+  theme_bw() +
+  theme(legend.position="none",
+        axis.text  = element_text(size = 10),
+        axis.title = element_text(size = 11),
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        plot.subtitle = element_text(hjust = 0.5)) +
+  scale_x_continuous(breaks=seq(6, 12, by = 1)) +
+  scale_y_continuous(limits=c(-.4, .4),
+                     breaks=seq(-.4, .4, by = .2)) +
+  labs(subtitle = "Climate Change Concern\nAcross National Surveys",
+       x = "Logged GDP/Capita",
+       y = NULL)
+
+c_coef_plot <- spread_draws(concern_m1, b_log_gdppc) %>% 
+  mutate(dv = "Correlation Between Women\nand Climate Change Concern") %>% 
+  ggplot(aes(x = b_log_gdppc)) +
+  stat_halfeye(aes(fill = after_stat(x < 0))) +
+  facet_wrap(dv ~ ., 
+             ncol = 1,
+             strip.position = "left") +
+  geom_vline(xintercept = 0,
+             colour = "grey60",
+             linetype = 2) +
+  theme_bw() +
+  theme(legend.position = "none",
+        strip.background = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        strip.text = element_blank(),
+        strip.placement = "left",
+        plot.subtitle = element_text(hjust = 0.5)) +
+  scale_fill_manual(breaks = c(TRUE, FALSE),
+                    values = c("grey60", "grey45")) +
+  scale_color_manual(breaks = c(TRUE, FALSE),
+                     values = c("grey60", "grey45")) +
+  labs(subtitle = "Meta-Regression Coefficient\nfor Logged GDP/Capita",
+       x = NULL,
+       y = NULL)
+
+(c_plot | c_coef_plot) +
+  plot_annotation(title = paste("Gender and Climate Change Concern in",
+                                n_c,
+                                "National Surveys\nby Level of Economic Development"),
+                  subtitle = "Assessing Gender Differences by GDP/Capita",
+                  caption = "Notes: The left panel shows a scatterplot of the correlation between an indicator variable for a woman respondent and concern for climate change against GDP/capita; each observation represents one climate-change item in a single national survey. The right panels report the results of a four-level meta-regression of these observations with varying intercepts for country, item, and survey project-wave; _n_ = 6090 survey-item-country-years.",
+                  theme = theme(plot.caption =
+                                  ggtext::element_textbox_simple()))
+```
+
+These studies are plotted in the left panel of @fig-concern.
+The correlation between respondents' gender and their climate concern expressed in a single survey item appears on the _y_-axis; the vertical whiskers on each point represent uncertainty in the correlation due to sampling error.
+The economic development of the country at the time of the survey, measured as in @Bush2023 as the log of GDP/capita, is on the _x_-axis.
+
+Analyses that seek to explain differences across studies---here, the differences in the observed correlations between gender and climate concern survey items---are known as meta-regressions [see @Higgins2020].
+The right panel of @fig-concern presents the results of a meta-regression of these correlations on economic development.
+This meta-regression takes into account the lack of independence across studies with a Bayesian multilevel model with varying intercepts for each country, survey, and item.
+Its results provide additional support for the finding of the main models of @Bush2023 for that article's first claim: women express more concern about climate change than men where GDP/capita is higher.
+
+
+# Economic Development and Climate Change Concern 
+
+The second claim of @Bush2023 is that the wider differences in concern among men and women in richer countries arise because "_both_ men and women will be less concerned about climate change in wealthier countries than in poorer countries, but that men's concern will decline more rapidly" [@Bush2023, 591].
+The article's analyses of the three cross-national surveys it examined each indicate climate concern is lower in richer countries and particularly among the men of those countries [@Bush2023, 593-594 and 600].
+
+This claim and these findings are both surprising.
+One of the most influential theories in comparative public opinion over the past half century, Inglehart's postmaterialism thesis, holds that as countries grow richer, the values of their citizens will shift beyond worries for order and immediate material security to broader concerns for individual autonomy and quality of life [see, e.g., @Inglehart1977; @Inglehart2005; @Inglehart2018], notably including the protection of the environment [see, e.g., @Inglehart1995; @Welzel2013].
+That is, the postmaterialism thesis would lead us to expect the opposite of the claim put forward in @Bush2023, that climate concern should be expected to be higher in richer countries than poorer ones.
+
+Which theory is supported by the available evidence?
+Of the 103 cross-national surveys with items on climate concern described in the previous section, 92 were similar to the three analyzed in @Bush2023; that is, these 92 surveys included cross-sections of ten or more countries (mean = 27.4 countries, median = 28) with one or more items (mean = 2.3 items, median = 2) tapping respondents' concern about climate change.
+For this purpose, because the quantity of interest is how economic development relates to the _levels_ of concern both for men and for women, not simply the difference between men and women, these cross-national surveys are not split into their national-survey components but instead only into cross-sections.
+Together, the surveys enable a total of 209 cross-national studies of concern for climate change.
+
+Each of these studies, following the main models of @Bush2023 [, 593, Table 1, Models 1 and 4], estimates the following equation for the climate concern of individual $i$ in country $j$:
+
+$$
+\begin{aligned}
+Concern_{ij} =& \gamma_{00} + \gamma_{01}Log(GDP/capita)_j + \gamma_{10}Women_{ij} \\
+&+ \gamma_{11}Log(GDP/capita)_j \times Women_{ij} +
+r_{0j} + r_{1j}Women_{ij}
+\end{aligned}
+$$ {#eq-main}
+
+That is, each study estimates a hierarchical model with varying intercepts for each country ($r_{0j}$), varying slopes for the coefficient for the gender of the respondent in each country ($r_{1j}$), and a cross-level multiplicative interaction between country economic development and respondent gender (captured by $\gamma_{11}$).
+The interaction term means the estimated conditional effect of economic development on climate concern depends on the gender of the respondent as follows:
+$$
+\frac{\partial Concern_{ij}}{\partial Log(GDP/capita)_j} = \gamma_{01} + \gamma_{11}Women_{ij}
+$$ {#eq-interaction}
+Logistic regression is used to estimate @eq-main for responses to dichotomous survey items, ordinal logistic regression for survey items with three or four ordered response categories, and linear regression for items with five or more ordered response categories.
+
+```{r meta-surveys, eval=FALSE}
+cca_by_survey <- rio::import(here("data",
+                                  "cca_by_survey.rds"),
+                             trust = TRUE)
+
+meta_surveys <- cca_by_survey %>% 
+  filter(item_category == "concern" &
+           term == "log_gdppc") %>% 
+  nest(.by = model, .key = "results_df") %>% 
+  mutate(meta = map(results_df, 
+                    ~ brm(estimate | se(std.error) ~ 
+                            1 + (1 | survey2 + item),
+                          data = .x,
+                          cores = 4,
+                          iter = 800,
+                          backend = "cmdstanr",
+                          control = list(adapt_delta = 0.99, 
+                                         max_treedepth = 20))))
+
+meta_surveys1 <- meta_surveys %>% 
+  mutate(meta_draws = map(meta, ~ spread_draws(.x, Intercept))) %>% 
+  unnest(meta_draws) %>% 
+  select(-results_df, -meta)
+
+rio::export(meta_surveys1, here("data",
+                                "meta_surveys1.rds"))
+```
+
+```{r}
+#| label: fig-cca_gdppc
+#| fig-cap: "Both Men and Women Tend to Express More Concern About Climate Change in Richer Countries Than in Poorer Countries"
+#| fig-height: 4.5
+cca_by_survey <- rio::import(here("data",
+                                  "cca_by_survey.rds"),
+                             trust = TRUE)
+
+meta_surveys1 <- rio::import(here("data",
+                                  "meta_surveys1.rds"),
+                             trust = TRUE)
+
+n_concern <- nrow(cca_by_survey %>% filter(term == "log_gdppc" &
+                                             str_detect(item_category, "concern")))
+
+pos_perc <- (nrow(cca_by_survey %>%
+                    filter(term == "log_gdppc" &
+                             str_detect(item_category, "concern")) %>%
+                    filter(statistic > 0)) /
+               n_concern * 100) %>% 
+  round()
+
+tval_gdppc <- cca_by_survey %>% 
+  filter(term == "log_gdppc" &
+           str_detect(item_category, "concern")) %>% 
+  mutate(sig = as_factor(case_when(statistic <= -1.96 ~ -1,
+                                   statistic >= 1.96 ~ 1,
+                                   .default = 0)),
+         project = str_extract(survey2, "[a-z]+"),
+         project = if_else(project == "feb", "eb", project))
+
+ann_text <- tval_gdppc %>% 
+  group_by(model, sig) %>% 
+  summarize(sig_count = n()) %>% 
+  group_by(model) %>% 
+  mutate(perc = paste0(round(100 * sig_count/sum(sig_count)), "%")) %>% 
+  select(-sig_count) %>% 
+  filter(!sig == 0) %>% 
+  mutate(statistic = if_else(sig == -1, -4.5, 7),
+         y = if_else(sig == -1, 6.5, 13))
+
+dist_surveys <- tval_gdppc %>% 
+  ggplot(aes(x = statistic, fill = sig)) +
+  geom_histogram(binwidth = .49,
+                 boundary = 0,
+                 color = "grey35") +
+  geom_vline(xintercept = c(-1.96, 1.96),
+             color = "grey70",
+             linetype = 2) +
+  geom_vline(xintercept = 0,
+             color = "grey10",
+             linetype = 2) +
+  facet_wrap(model ~ ., 
+             ncol = 1,
+             strip.position = "left") +
+  geom_text(aes(label = perc, y = y, color = sig), data = ann_text) +
+  scale_x_continuous(breaks=seq(-6, 10, 2)) +
+  scale_fill_manual(breaks = c(-1, 0 , 1),
+                    values = c("grey60", "white", "grey45")) +
+  scale_color_manual(breaks = c(-1, 0 , 1),
+                     values = c("grey60", "white", "grey45")) +
+  theme_bw() +
+  theme(legend.position = "none",
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        strip.background = element_blank(),
+        strip.text = element_text(size = 9,
+                                  angle = 0,
+                                  hjust = 0),
+        plot.subtitle = ggtext::element_markdown(hjust = 0.5)) +
+  labs(subtitle = "Distribution of Coefficient _t_-values Across Studies") +
+  xlab(NULL) +
+  ylab(NULL)
+
+ann_text2 <- meta_surveys1 %>% 
+  group_by(model) %>% 
+  summarize(perc_pos = paste0(round(100*sum(Intercept > 0)/n(), 1),
+                              "%"),
+            perc_neg = paste0(round(100 - 100*sum(Intercept > 0)/n(), 1),
+                              "%"))
+
+meta_coef_surveys <- meta_surveys1 %>% 
+  ggplot(aes(x = Intercept)) +
+  stat_halfeye(aes(fill = after_stat(x < 0))) +
+  geom_vline(xintercept = 0,
+             color = "grey10",
+             linetype = 2) +
+  facet_wrap(model ~ ., 
+             ncol = 1,
+             strip.position = "left") +
+  geom_text(aes(label = perc_pos), 
+            y = .58,
+            x = .23,
+            color = "grey45",
+            data = ann_text2) +
+  theme_bw() +
+  theme(legend.position = "none",
+        strip.background = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        strip.text = element_blank(),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  scale_fill_manual(breaks = c(TRUE, FALSE),
+                    values = c("grey60", "grey45")) +
+  scale_color_manual(breaks = c(TRUE, FALSE),
+                     values = c("grey60", "grey45")) +
+  labs(subtitle = "Meta-Analysis Coefficient") +
+  xlab(NULL) +
+  ylab(NULL) 
+
+dist_surveys + meta_coef_surveys +
+  plot_annotation(title = "Economic Development and Climate Concern in 209 Cross-National Studies",
+                  subtitle = "Coefficients for Logged GDP/Capita",
+                  caption = "Notes: Estimates of Equation 1. Coefficients for 'All Respondents' estimated by excluding the interaction term.",
+                  theme = theme(plot.caption =
+                                  ggtext::element_textbox_simple())) 
+```
+
+@fig-cca_gdppc shows the results.
+The panels on the left side display the distribution of _t_\nobreakdashes-values for logged GDP/capita in these analyses, with the top and middle panels showing estimated conditional effects for men and for women calculated using @eq-interaction and the bottom panel the estimated effect on all respondents when the interaction term is omitted.
+Only a very small share of these cross-national analyses evince a statistically significant negative relationship between economic development and concern for climate change similar to those presented in @Bush2023.
+On the contrary, most estimated effects are positive, and a large share are both positive and statistically significant at the 95% level.
+
+As in the previous section, the variety of different survey items on climate concern (here 64 in total) prevents simply pooling these data in a single analysis, and meta-analysis again provides the means of reaching conclusions based on all of the available evidence.
+In this case, a Bayesian multilevel meta-analysis of the conditional effects of logged GDP/capita that includes varying intercepts for each survey (as the results for different items in the same survey are not independent) and each distinct survey item (as the results for the same item asked in different surveys are not independent) is appropriate.
+
+The resulting posterior distributions of the meta-analysis coefficient for logged GDP/capita are shown in the right-hand panels of @fig-cca_gdppc.
+The vast bulk of each is positive: in even the smallest, the estimated effect of economic development for men, 94.1% of the posterior is positive.
+Consistent with the postmaterialism thesis---and contrary to the second of the claims presented in @Bush2023---both women and men in richer countries generally express _more_ concern about climate change, not less, than people in poorer countries.
+
+# Gender and Perceptions of the Benefits and Costs of Mitigation
+
+The third claim @Bush2023 [, 598] advances is that people in richer countries, and particularly men, perceive themselves as having less to gain and more to lose from the major economic and social changes required to mitigate climate change, and their aversion to these losses leads them to express less concern for the problem.
+The evidence that work presents is based on text analyses of open-ended questions in an original ten-country survey and of focus groups conducted in the United States and Peru; it puts forward no evidence based on more typical survey items.
+
+```{r}
+#| label: fig-benefit
+#| fig-cap: "In Richer (and Poorer) Countries, Women and Men Generally Perceive the Benefits and Costs of Mitigation No Differently"
+#| fig-height: 4
+
+cca_by_country <- rio::import(here("data",
+                                   "cca_by_country.rds"),
+                              trust = TRUE)
+
+n_b <- cca_by_country %>%
+  filter(str_detect(item_category, "cost|benefit")) %>% 
+  distinct(country, year, survey) %>% 
+  nrow() %>%
+  format(big.mark = ",", scientific = FALSE)
+
+b_plot <- cca_by_country %>%
+  filter(str_detect(item_category, "cost|benefit")) %>%
+  mutate(dv = "Correlation of Women\n& Perception of Mitigation\nBenefits vs. Costs") %>% 
+  ggplot(aes(x = log_gdppc, y = z_r)) +
+  facet_wrap(dv ~ .,
+             ncol = 1,
+             strip.position = "left") +
+  geom_segment(aes(x = log_gdppc, xend = log_gdppc,
+                   y = z_r - 1.96*se_zr, yend = z_r + 1.96*se_zr),
+               na.rm = TRUE,
+               alpha = .05) +
+  geom_point(size = 1, alpha = .05) +
+  geom_smooth(method = 'lm',
+              formula = 'y ~ x',
+              se = FALSE) +
+  theme_bw() +
+  theme(legend.position="none",
+        axis.text  = element_text(size = 10),
+        axis.title = element_text(size = 11),
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        plot.subtitle = element_text(hjust = 0.5)) +
+  scale_x_continuous(breaks=seq(6, 12, by = 1)) +
+  scale_y_continuous(limits=c(-.4, .4),
+                     breaks=seq(-.4, .4, by = .2)) +
+  labs(subtitle = "Climate Change Mitigation Perceptions\nAcross National Surveys",
+       x = "Logged GDP/Capita",
+       y = NULL)
+
+b_coef_plot <- spread_draws(benefit_cost_m1, b_log_gdppc) %>% 
+  mutate(dv = "Correlation Between Women\nand Mitigation Benefits vs. Costs") %>% 
+  ggplot(aes(x = b_log_gdppc)) +
+  stat_halfeye(aes(fill = after_stat(x < 0))) +
+  facet_wrap(dv ~ ., 
+             ncol = 1,
+             strip.position = "left") +
+  geom_vline(xintercept = 0,
+             colour = "grey60",
+             linetype = 2) +
+  theme_bw() +
+  theme(legend.position = "none",
+        strip.background = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        strip.text = element_blank(),
+        strip.placement = "left",
+        plot.subtitle = element_text(hjust = 0.5)) +
+  scale_fill_manual(breaks = c(TRUE, FALSE),
+                    values = c("grey60", "grey45")) +
+  scale_color_manual(breaks = c(TRUE, FALSE),
+                     values = c("grey60", "grey45")) +
+  labs(subtitle = "Meta-Regression Coefficient\nfor Logged GDP/Capita",
+       x = NULL,
+       y = NULL)
+
+(b_plot | b_coef_plot) +
+  plot_annotation(title = paste("Perceptions of Benefits vs Costs of Mitigation in",
+                                n_b,
+                                "National Surveys\nby Level of Economic Development"),
+                  subtitle = "Assessing Gender Differences by GDP/Capita",
+                  caption = "Notes: The left panel is a scatterplot of the correlation between an indicator variable for a woman respondent and perceptions of mitigation benefits and costs against GDP/capita; each observation represents one climate-change item in a single national survey. The right panels report the results of a four-level meta-analysis of these observations with varying intercepts for country, item, and survey project-wave; _n_ = 1796 survey-item-country-years.",
+                  theme = theme(plot.caption =
+                                  ggtext::element_textbox_simple()))
+```
+
+For this work, twenty-two cross-national surveys were identified that include one or more items that tap perceptions of the costs, benefits, or both of climate change mitigation.
+For example, the 2022 Risks That Matter survey [@OECD2023] asked how much concern respondents felt regarding "rising energy/fuel costs" due to "building up green infrastructure, emissions limits and carbon taxes," while Eurobarometer 95.1 asked respondents their agreement with the statement, "The costs of the damages due to climate change are much higher than the costs of the investments needed for a green transition" [@EC2023].
+As in the earlier examination of climate concern, these cross-national surveys are broken down into their 618 component national surveys with multiple items from a single survey each providing a separate study (all survey questions on the costs and benefits of mitigation are listed in the supplemental materials).
+This yields 1796 studies in all.
+For each study, the _z_-transformed correlation between the dichotomous gender variable and perceptions of benefits versus costs was calculated.
+These correlations are plotted against logged GDP/capita in the left panel of @fig-benefit.
+
+The result contradicts the explanation proposed by @Bush2023 for the diverging levels of concern by gender in richer countries.
+Correlations of gender with perceptions of the benefits versus costs of mitigation appear flat (if not declining) and very nearly zero on average over the entire observed range of economic development.
+This is confirmed in a meta-regression with varying intercepts for each country, survey, and item: only a third of the posterior for the coefficient for logged GDP/capita is positive, and its median is very close to zero.
+
+But if the differences between women and men in richer countries cannot be explained with diverging perceptions of the costs and benefits of climate change mitigation, then how can they be explained?
+The next section offers an answer: traditional masculity norms of fearlessness.
+
+
+# Economic Development and Masculinity Norms
+
+Masculinity norms are societal understandings of what behavior is considered appropriate for men; these norms are shared in the sense that even those members of a society who reject them have no trouble in identifying them [see, e.g., @Thompson1986].
+One aspect of traditional masculinity as it is understood in many societies is that men are socially expected to be tough, to be fearless, to diminish risks of all kinds [see @Thompson1986; @Tyler2018; @Wedgwood2023].
+That is to say that in these settings, notwithstanding men's _awareness_ of a given threat, they are expected to downplay its severity, and their conformity to these expectations are rewarded with respect [@Thomson2020, 151].
+
+The argument here is that men's greater adherence to this traditional masculinity norm in richer countries is the explanation for the wider gender differences in expressed climate concern in those countries found by @Bush2023 and confirmed above.
+One recent paper has found that the prevalence of other aspects of traditional masculinity---valorizing winning above all, violence, men's control over women, help avoidance, and disdain for homosexuals---are positively correlated with economic development in a single cross-sectional survey of 43 African, Asian, and European countries [@DeHaas2024].
+This is perhaps surprising, given that gender egalitarian views are robustly positively related to economic development across both space and time [see, e.g., @Welzel2013; @Woo2023], but this paper's authors note that the masculinity norms it documents are only weakly related to attitudes regarding the proper role of women in society [@DeHaas2024, 2-3].
+Whether the norm of masculine fearlessness and dismissal of risk follows the same pattern with regard to economic development as these other traditional masculinity norms is an open question.
+
+```{r}
+#| label: fig-risk
+#| fig-cap: "In Richer Countries, Women Generally Express More Concern Than Men _Regardless of the Source of Risk_"
+#| fig-height: 4
+
+risk_by_country <- rio::import(here("data",
+                                   "risk_by_country.rds"),
+                              trust = TRUE)
+
+n_r <- risk_by_country %>%
+  distinct(country, year, survey2) %>% 
+  nrow() %>%
+  format(big.mark = ",", scientific = FALSE)
+
+r_plot <- risk_by_country %>%
+  mutate(dv = "Correlation of\nWomen & Concern") %>% 
+  ggplot(aes(x = log_gdppc, y = z_r)) +
+  facet_wrap(dv ~ .,
+             ncol = 1,
+             strip.position = "left") +
+  geom_segment(aes(x = log_gdppc, xend = log_gdppc,
+                   y = z_r - 1.96*se_zr, yend = z_r + 1.96*se_zr),
+               na.rm = TRUE,
+               alpha = .025) +
+  geom_point(size = 1, alpha = .05) +
+  geom_smooth(method = 'lm',
+              formula = 'y ~ x',
+              se = FALSE) +
+  theme_bw() +
+  theme(legend.position="none",
+        axis.text  = element_text(size = 10),
+        axis.title = element_text(size = 11),
+        strip.background = element_blank(),
+        strip.placement = "outside",
+        plot.subtitle = element_text(hjust = 0.5)) +
+  scale_x_continuous(breaks=seq(6, 12, by = 1)) +
+  scale_y_continuous(limits=c(-.4, .4),
+                     breaks=seq(-.4, .4, by = .2)) +
+  labs(subtitle = "Concern Across\nNational Surveys and Risks",
+       x = "Logged GDP/Capita",
+       y = NULL)
+
+r_coef_plot <- spread_draws(risk_m1, b_log_gdppc) %>% 
+  mutate(dv = "Correlation Between\nWomen and Concern") %>% 
+  ggplot(aes(x = b_log_gdppc)) +
+  stat_halfeye(aes(fill = after_stat(x < 0))) +
+  facet_wrap(dv ~ ., 
+             ncol = 1,
+             strip.position = "left") +
+  geom_vline(xintercept = 0,
+             colour = "grey60",
+             linetype = 2) +
+  theme_bw() +
+  theme(legend.position = "none",
+        strip.background = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        strip.text = element_blank(),
+        strip.placement = "left",
+        plot.subtitle = element_text(hjust = 0.5)) +
+  scale_fill_manual(breaks = c(TRUE, FALSE),
+                    values = c("grey60", "grey45")) +
+  scale_color_manual(breaks = c(TRUE, FALSE),
+                     values = c("grey60", "grey45")) +
+  labs(subtitle = "Meta-Regression Coefficient\nfor Logged GDP/Capita",
+       x = NULL,
+       y = NULL)
+
+(r_plot | r_coef_plot) +
+  plot_annotation(title = paste("Gender and Concern Across Risks in",
+                                n_r,
+                                "National Surveys\nby Level of Economic Development"),
+                  subtitle = "Assessing Gender Differences by GDP/Capita",
+                  caption = "Notes: The left panel shows a scatterplot of the correlation between an indicator variable for a woman respondent and concern for a wide range of topics against GDP/capita; each observation represents one item in a single national survey. The right panels report the results of a four-level meta-regression of these observations with varying intercepts for country, item, and survey project-wave; _n_ = 10,043 survey-item-country-years.",
+                  theme = theme(plot.caption =
+                                  ggtext::element_textbox_simple()))
+```
+
+To find out, cross-national surveys with survey items similar to common questions on climate change concern were collected.
+These items asked respondents the extent of the worry or concern they felt or to assess the severity of the problem or threat with regard to a wide range of potential risks.
+This collection of cross-national surveys includes some 239 different survey items.
+The dozen most frequent topics of potential concern are crime, job loss, drinking water contamination, terrorism, food safety, mental health, extreme weather, immigration, contagious diseases, government corruption, identity theft, war, public schools, and roadway accidents, but the topics covered also include such topics as police abuses, globalization, energy dependence, social discrimination, and eating a balanced diet.
+Once more, cross-national surveys are divided into their component national surveys and multiple items from a single survey are treated separately.
+This provides more than ten thousand individual studies of concern.
+
+@fig-risk shows that gender differences in concern across all of these risks are greater in richer countries.
+This finding supports the argument that the pattern in climate change concern identified in @Bush2023 and further strengthened by @fig-concern above is the product of a norm of masculine performative fearlessness that is more widespread where levels of economic development are higher.
+
+
+# Conclusions
+Heeding the long-standing admonition to maximize the evidence employed to test our theories [see, e.g., @King1994], this reassessment tested the three claims put forward by a prominent recent work, @Bush2023, on gender and climate change concern with meta-analyses of a collection of cross-national surveys many times larger than the three examined in that article.
+The first claim, that differences between men and women in climate change concern are larger in richer countries, is supported across the thousands of studies presented here.
+But, contrary to the second claim and consistent with postmaterialist theory, this additional evidence indicates that levels of climate change concern are _higher_, not lower, for both men and women in richer countries.
+The third claim, that in richer countries men see more costs and fewer benefits than women in climate change mitigation, finds no support in the available surveys.
+
+These findings have several important implications.
+The first is that research on the political consequences of gender should engage more thoroughly with the burgeoning scholarship on masculinities.
+This scholarship frequently underscores that, as is the case of other identities, masculinity is most often performed unreflexively, that is, through responses that simply 'feel right' rather than careful consideration of costs and benefits of various alternate courses of action [see, e.g., @Thomson2020, 150-151].
+In light of this scholarship, the lack of support for gender differences in assessments of the costs and benefits of climate change mitigation is hardly surprising.
+
+A second is a set of very different policy prescriptions than those put forward by @Bush2023.
+That article's finding of gender differences in the perception of climate mitigation costs led to its recommendation to generate support in richer countries by compensating men for the loss of, e.g., such activities as "driving low-mileage vehicles or eating carbon-intensive foods" [@Bush2023, 597, 607].
+As the evidence does not support the argument that men see mitigation as more costly than women, such a strategy is unlikely to work.
+In fact, by highlighting these costs, compensation schemes may even increase men's opposition.
+
+Much as campaigns to reduce speeding through education on its risks prompt _more_ speeding among men enacting traditional masculinity norms [see, e.g., @Walker2000], efforts to communicate the risks of climate change likely only encourage such men to reject the need for mitigation to performatively demonstrate their fearlessness.
+Instead, activists and policymakers should incorporate understanding of these norms into their efforts, as in the successful Australian 'pinkie campaign' against speeding.
+With the slogan, "No One Thinks Big of You," that campaign uses wagging a little finger at men driving recklessly to send the message that others view speeding not as evidence of fearlessness but instead as an attempt to compensate for other shortcomings [@Watsford2008].
+Shifting men's practices with regard to climate change mitigation from enactments of traditional masculinity norms to those of an 'ecomodern' masculinity that emphasizes embracing technological advances to overcome environmental challenges [see, e.g., @Letouneau2024] would seem a promising step along these lines, although invocations of ecomodern masculinity to date have too often focused on such unpromising or unhelpful measures as geoengineering, carbon capture, and biofuels rather than, for example, the electrification of housing and transport [see, e.g., @Nagel2022].
+Likewise, appealing directly to traditional masculinity's norms of paternalism, which validate men as protectors who take responsible measures to control threats to others, would likely also help many men move beyond denying the risks of climate change [see @Thomson2020].
+While either such approach would no doubt frustrate those of us who are eager to simply move beyond the irrational limitations currently imposed on societies by widespread traditional masculinity norms, the urgency with which climate change must now be addressed counsels taking an 'all of the above' approach to building public support for decarbonization.
+
+A final implication of this work is methodological, and it has broad applicability to studies of public opinion.
+It is that meta-analysis is more than simply a method for reviewing a well-developed literature; it is also a means of maximizing the evidence brought to bear on even novel questions of interest. 
+The growing availability of both cross-national survey datasets [see, e.g., @Smith2015] and tools to programmatically wrangle them [see, e.g., @Solt2019b] mean that data constraints alone rarely justify drawing on only one or a few surveys.
+After a larger body of relevant data is identified, meta-analysis provides a straightforward method for incorporating it into a single coherent investigation.
+Our understanding of political phenomena will benefit greatly if we make more use of it.
+
+\pagebreak
+
+# References {.unnumbered}
+
+::: {#refs-main}
+:::
+
+
+
+\pagebreak
+
+```{=tex}
+\renewcommand{\baselinestretch}{1}
+\selectfont
+\maketitle
+\selectfont
+```
+```{=tex}
+\pagenumbering{arabic}
+\renewcommand*{\thepage}{A\arabic{page}}
+```
+```{=tex}
+\setcounter{section}{0}
+\renewcommand*{\thesection}{A\arabic{section}}
+```
+```{=tex}
+\setcounter{figure}{0}
+\renewcommand*{\thefigure}{A\arabic{figure}}
+```
+```{=tex}
+\setcounter{table}{0}
+\renewcommand*{\thetable}{A\arabic{table}}
+```
+```{=tex}
+\vspace{-.5in}
+\begin{center}
+\begin{Large}
+Supplementary Material
+\end{Large}
+\end{center}
+```
+
+
+\listoftables
+
+# Survey Items Used  {#surveys}
+<!-- In accordance with the advice offered by @Hu2022 to avoid data-entry errors by automating data collection, the `DCPOtools` R package [@Solt2019b] was used to compile the responses to these questions. -->
+<!-- The current version of the software facilitates the entire practical data generation process: from facilitating the acquisition of original survey datasets and converting them into R standard format for quicker loading; through standardizing country names, identifying survey years, and extracting the desired survey items; to restructuring the resulting data for analysis with the DCPO model.  -->
+<!-- The primary objective is to limit manual interventions, thereby maximizing reproducibility and reducing the error potential inherent in human-operated data preparation tasks. -->
+<!-- The survey dataset codes listed in Table \@ref(tab:itemsTb) correspond to those used in that package; Table \@ref(tab:surveyInfo) lists the codes of each individual survey with the citation of each dataset. -->
+
+<!-- Together, the survey items in the source data were asked in r n_countries` different countries in at least two time points over r n_years` years, r year_range`, yielding a total of r n_cyi` country-year-item observations.^[ -->
+<!-- A few surveys---`ees1989`, `issp1990`, and `evs_combo`---include Northern Ireland but do not provide a sampling weight to include those respondents in the United Kingdom as a whole.  -->
+<!-- For clarity, we removed them from the estimation.  -->
+<!-- The estimated trends and conclusions do not change by including or excluding the small amount of data on Northern Ireland.] -->
+<!-- The number of items observed in the source data for each country-year is plotted in Figures\nobreakspace{}\@ref(fig:obs)\nobreakspace{}and\nobreakspace{}\@ref(fig:obs2) below. -->
+<!-- The macrointerest scores of country-years with more observed items are likely to be estimated more precisely. -->
+<!-- The estimates for country-years with fewer (or no) observed items rely more heavily (or entirely) on the random-walk prior and are therefore less certain. -->
+
+```{r}
+#| label: tbl-cc
+
+read_csv(here::here("data-raw",
+                    "surveys_cc1.csv"),
+         col_types = "ccccccccc") %>%
+  filter(item_category == "concern" & survey!="amb_combo") %>% 
+  transmute(Survey = if_else(str_detect(survey, "amb_"),
+                           str_replace(survey, "amb_.*(\\d{4})", "amb\\1"),
+                           survey),
+            `Survey\nItem\nCode` = item,
+            `Question Text` = question_text,
+            `Response Categories` = str_to_lower(response_categories) %>% 
+              str_replace("\\bi\\b", "I")) %>% 
+  distinct() %>% 
+  modelsummary::datasummary_df(output = "kableExtra",
+                               longtable = TRUE,
+                               title = "Climate Change Concern Survey Items") %>%
+  kableExtra::column_spec(1, width = "7em") %>%
+  kableExtra::column_spec(2, width = "14em") %>%
+  kableExtra::column_spec(3, width = "20em") %>%
+  kableExtra::column_spec(4, width = "14em") %>%
+  kableExtra::kable_styling(font_size = 7) %>%
+  kableExtra::kable_styling(latex_options = "repeat_header") %>%
+  kableExtra::kable_styling(latex_options = "striped") %>%
+  kableExtra::footnote(symbol = "Survey dataset codes correspond to those used in the DCPOtools R package (Solt, Hu, and Tai 2019).")
+```
+
+```{r}
+#| label: tbl-cb
+
+read_csv(here::here("data-raw",
+                    "surveys_cc1.csv"),
+         col_types = "ccccccccc") %>%
+    filter(str_detect(item_category, "cost|benefit")) %>%
+  transmute(Survey = if_else(str_detect(survey, "amb_"),
+                           str_replace(survey, "amb_.*(\\d{4})", "amb\\1"),
+                           survey),
+            `Survey\nItem\nCode` = item,
+            `Question Text` = question_text,
+            `Response Categories` = str_to_lower(response_categories) %>% 
+              str_replace("\\bi\\b", "I")) %>% 
+  distinct() %>% 
+  modelsummary::datasummary_df(output = "kableExtra",
+                               longtable = TRUE,
+                               title = "Costs and Benefits of Climate Change Mitigation Survey Items") %>%
+  kableExtra::column_spec(1, width = "7em") %>%
+  kableExtra::column_spec(2, width = "14em") %>%
+  kableExtra::column_spec(3, width = "20em") %>%
+  kableExtra::column_spec(4, width = "14em") %>%
+  kableExtra::kable_styling(font_size = 7) %>%
+  kableExtra::kable_styling(latex_options = "repeat_header") %>%
+  kableExtra::kable_styling(latex_options = "striped") %>%
+  kableExtra::footnote(symbol = "Survey dataset codes correspond to those used in the DCPOtools R package (Solt, Hu, and Tai 2019).")
+```
+
+
+```{r}
+#| label: tbl-risk
+
+read_csv(here::here("data-raw",
+                    "surveys_risk.csv"),
+         col_types = "ccccccccc") %>%
+  # filter(item_category == "concern" & survey!="amb_combo") %>% 
+  transmute(Survey = if_else(str_detect(survey, "amb_"),
+                           str_replace(survey, "amb_.*(\\d{4})", "amb\\1"),
+                           survey),
+            `Survey\nItem\nCode` = item,
+            `Question Text` = question_text,
+            `Response Categories` = str_to_lower(response_categories) %>% 
+              str_replace("\\bi\\b", "I")) %>% 
+  distinct() %>% 
+  modelsummary::datasummary_df(output = "kableExtra",
+                               longtable = TRUE,
+                               title = "Other Concern Survey Items") %>%
+  kableExtra::column_spec(1, width = "7em") %>%
+  kableExtra::column_spec(2, width = "14em") %>%
+  kableExtra::column_spec(3, width = "20em") %>%
+  kableExtra::column_spec(4, width = "14em") %>%
+  kableExtra::kable_styling(font_size = 7) %>%
+  kableExtra::kable_styling(latex_options = "repeat_header") %>%
+  kableExtra::kable_styling(latex_options = "striped") %>%
+  kableExtra::footnote(symbol = "Survey dataset codes correspond to those used in the DCPOtools R package (Solt, Hu, and Tai 2019).")
+```
+
+
+```{r surveyInfo, eval=FALSE}
+# dcpo_input_raw1 %>%
+#   dplyr::select(country, year, item, survey) %>%
+#   distinct() %>%
+#   separate(survey, c("surv1", "surv2", "surv3"), sep=", ", fill = "left") %>%
+#   pivot_longer(cols = starts_with("surv"), values_to = "survey") %>%
+#   mutate(str_trim(survey)) %>% 
+#   filter(!is.na(survey)) %>% 
+#   select(survey) %>% 
+#   distinct() %>% 
+#   left_join(surveys_data %>% 
+#               select(survey, citation),
+#             by = join_by(survey)) %>%
+#   arrange(survey) %>% 
+#   transmute(`Survey Dataset Code*` = survey %>% 
+#               str_replace_all(fixed("_"), "\\_"),
+#             `Citation` = citation %>% 
+#               str_replace_all("#", "No.") %>% 
+#               str_replace_all("&", "and") %>% 
+#               str_replace_all(fixed("_"), "\\_")) %>%
+#   modelsummary::datasummary_df(output = "kableExtra",
+#                                longtable = TRUE,
+#                                title = "Source Survey Information") %>%
+#   kableExtra::kable_styling(latex_options = "repeat_header") %>%
+#   kableExtra::kable_styling(latex_options = "striped") %>%
+#   kableExtra::column_spec(1, width = "12em") %>%
+#   kableExtra::column_spec(2, width = "60em") %>%
+#   kableExtra::kable_styling(font_size = 7) %>%
+#   kableExtra::footnote(symbol = "Survey dataset codes correspond to those used in the DCPOtools R package (Solt, Hu, and Tai 2019).")
+```
+
+\clearpage
+\pagebreak
+# Meta-Regression Tabular Results
+\clearpage
+
+```{r}
+#| label: tbl-models
+#| tbl-cap: "Meta-Regression Tabular Results"
+#| cache: false
+
+models <- concern_m1 %>% 
+  tidybayes::summarise_draws() %>% 
+  select(variable, median, sd) %>% 
+  filter(str_detect(variable, "^b_")) %>% 
+  transmute(var = if_else(variable == "b_log_gdppc", "Logged GDP/capita", "Intercept"),
+            Median = round(median, 3),
+            SD = round(sd, 3),
+            DV = "concern") %>% 
+  bind_rows(benefit_cost_m1 %>% 
+  tidybayes::summarise_draws() %>% 
+  select(variable, median, sd) %>% 
+  filter(str_detect(variable, "^b_")) %>% 
+  transmute(var = if_else(variable == "b_log_gdppc", "Logged GDP/capita", "Intercept"),
+            Median = round(median, 3),
+            SD = round(sd, 3),
+            DV = "benefit"),
+  risk_m1 %>% 
+  tidybayes::summarise_draws() %>% 
+  select(variable, median, sd) %>% 
+  filter(str_detect(variable, "^b_")) %>% 
+  transmute(var = if_else(variable == "b_log_gdppc", "Logged GDP/capita", "Intercept"),
+            Median = round(median, 3),
+            SD = round(sd, 3),
+            DV = "risk")) %>% 
+  pivot_wider(names_from = DV, 
+              values_from = c(Median, SD),
+              names_vary = "slowest")
+
+colnames(models) <- c(" ", rep(c("Median", "SD"), 3))
+
+tt(models) %>% 
+  group_tt(j = list(
+    "Climate Concern" = 2:3,
+    "Benefits vs Costs" = 4:5,
+    "Across Risks" = 6:7))
+```
+
+# References {.unnumbered}
+
+::: {#refs-appendix}
+:::
+
+
+
+
+
