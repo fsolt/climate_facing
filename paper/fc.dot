@@ -1,0 +1,75 @@
+digraph flowchart {
+      subgraph cluster_inc {
+        C0 [shape = plaintext,
+            style = invis,
+            fixedsize = true,
+            width = .9,
+            height = .95];
+        C1 [shape = rect,
+            style = invis,
+            fixedsize = true,
+            height = 1];
+        C0 -> C1 [style = invis, weight = 10];
+        style = filled;
+        fillcolor = "#F0F4FF";
+        label = "Included";
+        fontname = Helvetica;
+      }
+      
+      subgraph cluster_scr {
+        S0 [shape = plaintext,
+            style = invis,
+            fixedsize = true,
+            width = .9,
+            height = .93];
+        style = filled;
+        fillcolor = "#F0F4FF";
+        label = "Screening";
+        fontname = Helvetica;
+      }
+      
+      subgraph cluster_id {
+        I0 [shape = plaintext,
+            style = invis,
+            fixedsize = true,
+            width = .9,
+            height = .93];
+        style = filled;
+        fillcolor = "#F0F4FF";
+        label = "Identification";
+        fontname = Helvetica;
+        fontsize = 12;
+      }
+      
+      node [fontname = Helvetica, 
+            shape = rectangle,
+            style = filled,
+            fillcolor = "white",
+            fixedsize = true,
+            width = 4.3,
+            height = 1.2];
+            
+      all1 [label = "Survey-items identified from:\n —DCPOtools codebooks search (n = 404)\l —Survey archives searches (n = 15)\l —Web searches (n = 62)\l"];
+      all2 [label = "Survey-items assessed for\nrelevance (n = 481)"];
+      incl [label = "Survey-items included in\nstudy (n = 334)"];
+      excl [label = "Survey-items excluded (total n = 147):\n —policy preferences (n = 80)\l —individual behavior, interest, efficacy (n = 46)\l —beliefs regarding cause (n = 21)\l"];
+      concern [label = "Survey-items on concern\nincluded in analysis\n(n = 271)", width = 2.8];
+      cost [label = "Survey-items on costs and/or\nbenefits included in analysis\n(n = 63)", width = 2.8];
+      
+      # edge definitions with the node IDs
+      all1 -> all2;
+      all2 -> incl;
+      all2 -> excl;
+      incl -> concern;
+      incl -> cost [constraint = false];
+      
+      I0 -> S0 -> C0 [style = invis, weight = 10]
+
+      # subgraphs for horizontal alignment
+      subgraph {
+        rank = same; all2; excl;
+      }
+      subgraph {
+        rank = same; concern; cost;
+      }
+}
