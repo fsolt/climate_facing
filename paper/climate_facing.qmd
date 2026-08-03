@@ -92,7 +92,7 @@ The second is that this wider gap is due to lower levels of concern in richer co
 The third claim is that these patterns arise because people in richer countries, and especially men, perceive more costs and fewer benefits of policies designed to mitigate climate change.
 Drawing on three cross-sectional surveys and a paired case study of focus groups in Peru and the United States, @Bush2023 finds evidence to support each of these claims.
 
-This reassessment assembles a comprehensive collection of data on climate change attitudes comprising over 3000 national surveys and reexamines these three claims by drawing on meta-analysis tools rarely used in political science.
+This reassessment assembles a comprehensive collection of data on climate change attitudes comprising over 3000 national surveys and reexamines these three claims by drawing on meta-analysis tools growing in popularity in political science.
 This much larger evidentiary base confirms that the difference in climate change concern between men and women is generally larger in richer countries.
 But relatively few surveys show men in richer countries expressing lower levels of climate change concern than men in poorer countries---in fact, consistent with postmaterialist theory [see, e.g., @Inglehart1977; @Inglehart2005; @Inglehart2018], meta-analysis of the available cross-national surveys indicates the opposite is the case.
 Moreover, a meta-analysis of surveys directly asking respondents to assess the costs, benefits, or both of policies fighting climate change show little to no differences between men and women in these attitudes.
@@ -605,8 +605,8 @@ extract_results_mf <- function(file_path) {
     unnest(fit_f) %>% 
     mutate(model = "fit_f")
   
-  cca <- bind_rows(cca_m, cca_f) %>% 
-    select(-data_df, -fit)
+  cca <- bind_rows(cca_m, cca_f) |> 
+    select(-fit)
   
   return(cca)
 }
@@ -616,8 +616,8 @@ extract_gdppc_results_a <- function(file_path) {
     mutate(tidied = map(fit, tidy),
            model = "fit_a") %>%
     unnest(tidied) %>% 
-    filter(term == "log_gdppc") %>% 
-    select(-data_df, -fit)
+    filter(term == "log_gdppc") |> 
+  select(-fit)
   
   return(cca_a)
 }
@@ -670,7 +670,8 @@ rio::export(wdi_gdppc,
                  "wdi_gdppc.rds"))
 
 wdi_gdppc <- rio::import(here("data",
-                              "wdi_gdppc.rds"))
+                              "wdi_gdppc.rds"),
+                         trust = TRUE)
 
 all_data2 <- read_csv(here("data",
                            "all_data.csv"),
@@ -684,6 +685,7 @@ all_data2 <- read_csv(here("data",
   mutate(survey2 = if_else(str_detect(survey, "amb_"),
                            paste0("amb_", floor(year/2)*2),
                            survey),
+         survey2 = replace_values(survey2, "amb_2022" ~ "amb_2023"),
          log_gdppc = log(gdppc)) %>%
   group_by(country, year, survey, item) %>% 
   mutate(values = length(names(table(value)))) %>% 
@@ -955,8 +957,7 @@ cca_by_survey_cont_f <- cca_by_survey_cont0 %>%
 cca_by_survey_cont <- bind_rows(cca_by_survey_cont_a,
                                 cca_by_survey_cont_m,
                                 cca_by_survey_cont_f) %>% 
-  select(-data_df, 
-         -starts_with("fit"),
+  select(-starts_with("fit"),
          -starts_with("tidied"))
 
 rio::export(cca_by_survey_cont, here("data",
@@ -965,10 +966,6 @@ rio::export(cca_by_survey_cont, here("data",
 ```
 
 ```{r cca_by_survey, eval=FALSE}
-cca_by_country <- rio::import(here::here("data",
-                                         "cca_by_country.rds"),
-                              trust = TRUE)
-
 cca_by_survey2 <- rio::import(here("data",
                                    "cca_by_survey2.rds"),
                               trust=TRUE)
@@ -981,16 +978,28 @@ cca_by_survey_cont <- rio::import(here("data",
                                        "cca_by_survey_cont.rds"),
                                   trust=TRUE)
 
-cca_by_survey <- cca_by_survey2 %>%
-  bind_rows(cca_by_survey_ord) %>%
-  bind_rows(cca_by_survey_cont) %>% 
+cca_by_survey <- cca_by_survey2 |> 
+  bind_rows(cca_by_survey_ord) |> 
+  bind_rows(cca_by_survey_cont) |>  
+  ungroup() |> 
+  mutate(n_cats = as.numeric(str_extract(item, "\\d+[abc]?$") |> 
+                               str_extract("\\d+")),
+         z_r1 = cos(pi/(1 + sqrt(exp(estimate)))), 
+         z_r2 = estimate * 
+           (sqrt(sum(data_df$weight * 
+                          (data_df[["gdppc_log"]] -
+                             weighted.mean(data_df[["gdppc_log"]]))^2)) /
+              sqrt(sum(data_df$weight * 
+                              (data_df$target - weighted.mean(data_df$target))^2))),
+         z_r = if_else(n_cats < 5, z_r1, z_r2),
+         se_zr = sqrt(1/(n_country - 3))) |> 
   select(-data_df, 
          -starts_with("fit"),
          -starts_with("tidied"),
-         -item_category) |>
+         -starts_with("item_")) |>
   left_join(all_data2 |> 
-              distinct(item, item_category, item_subcategory),
-            by = "item") |> 
+              distinct(survey2, item, item_category, item_subcategory),
+            by = c("survey2", "item")) |> 
   mutate(model = factor(model, 
                         levels = paste0("fit_", c("m", "f", "a")),
                         labels = c("Men",
@@ -1005,6 +1014,10 @@ rio::export(cca_by_survey, here("data",
 ```
 
 ```{r meta-analyses}
+cca_by_country <- rio::import(here::here("data",
+                                         "cca_by_country.rds"),
+                              trust = TRUE)
+
 risk_by_country <- rio::import(here("data",
                                     "risk_by_country.rds"))
 
@@ -1059,21 +1072,18 @@ Specifically, it holds that the difference between women and men in climate chan
 
 This evidence, however, represents only a tiny fraction of the available surveys that asked respondents questions on how concerned they are about climate change.
 Given the importance of the topic, it should not come as a surprise that questions on climate concern have been included in many cross-national surveys, including not only four waves of the AmericasBarometer and seven Pew Global Attitudes Surveys, but also such well-known surveys as the Arab Barometer, the Eurobarometer, and the World Values Survey.
-In fact, `r all_data2 |> filter(item_category == "concern") |> pull(survey2) |> n_distinct()` different surveys that asked `r `all_data2 |> filter(item_category == "concern") |> pull(item) |> n_distinct()` different items on concern for climate change were identified (details on these survey questions and the procedure employed to identify them are available in the online supplemental materials).
+In fact, `r all_data2 |> filter(item_category == "concern") |> pull(survey2) |> n_distinct()` different surveys that asked `r all_data2 |> filter(item_category == "concern") |> pull(item) |> n_distinct()` different items on concern for climate change were identified (details on these survey questions and the procedure employed to identify them are available in the online supplemental materials).
 
 The large number and wide variety of these survey items makes collective analysis difficult.
-Pooling surveys
-A long literature on question wording effects cautions against simply pooling even such similar questions as "How concerned are you about climate change?" (asked in the Life in Transition Survey, Wave 2) and "How concerned are you, if at all, that global climate change will harm you personally at some point in your lifetime?" (asked in the 2015 Pew Global Attitudes Survey) together in a single analysis [see, e.g., @Rugg1941; @Krosnick2014; @Solt2016].
-Although multiple items tapping the same concept within a single survey enable a variety of techniques to minimize measurement error such as principal
-
-Recent contributions to the study of comparative public opinion have dealt with the issue of incomparability across survey items by estimating latent variables [see, e.g., @Claassen2020a; @Woo2023].
-These methods, however, typically generate measures at the country-year level and so prevent examination of individual-level variables like gender [but see @Caughey2019].
+This is a common issue.
+Despite long-standing advice to maximize the evidence employed to test theories [see, e.g., @King1994], survey research frequently takes advantage of the data available in only one or just a few surveys. 
+This is understandable given the difficulty of incorporating the evidence provided by different items from different surveys.
+Simply presenting and interpreting separate analyses of each of the available survey-items is superficially simple, but the feasibility of this approach collapses as the number of survey-items increases.
+Pooling multiple surveys provides a means to bring more data to bear, but it depends on identical items and response categories across the surveys: a long literature on question wording effects cautions against pooling even such similar questions as "How concerned are you about climate change?" (asked in the Life in Transition Survey, Wave 2) and "How concerned are you, if at all, that global climate change will harm you personally at some point in your lifetime?" (asked in the 2015 Pew Global Attitudes Survey) together in a single analysis [see, e.g., @Rugg1941; @Krosnick2014; @Solt2016].
+A diversity of items enables a variety of techniques to minimize measurement error---including principal components analyses (PCA), item response theory models (IRT), and weighted scales indices (WSI)---but these methods of combining multiple items into a single dependent variable depend on those items being answered by the same respondents [see, e.g., @Stoetzer2025; @Fu2025]. 
+Recent contributions to the study of comparative public opinion have dealt with the issue of incomparability across surveys and items by estimating latent variables [see, e.g., @Claassen2020a; @Woo2023; @Woo2025]; these methods, however, typically generate measures at the country-year level and so prevent examination of individual-level variables like gender [but see @Caughey2019].
 
 ```{r n_c}
-cca_by_country <- rio::import(here("data",
-                                   "cca_by_country.rds"),
-                              trust = TRUE)
-
 n_ns_c <- cca_by_country %>%
   filter(str_detect(item_category, "concern")) %>% 
   distinct(country, year, survey2) %>% 
@@ -1088,18 +1098,28 @@ n_nsi_c <- cca_by_country %>%
 
 ```
 
-Meta-analysis supplies a different approach to resolving this problem.
-Although infrequently used in political science, meta-analysis provides a tool to "consolidate the overall effect size" across many analyses, although more typically the analyses to be consolidated are those presented in many different articles [@Godefroidt2023, 25; see also @Schmid2020a].
-Here the cross-national surveys on climate concern are broken into their separate national components, yielding a total of `r n_ns_c` national surveys.
+Meta-analysis supplies an approach to resolving these problems.
+Meta-analysis provides a tool to "consolidate the overall effect size" from many analyses [@Godefroidt2023, 25].
+Although meta-analysis has not been frequently employed in political science---@Arel-Bundock2026 [, 38] counts just 85 articles employing the method across 141 journals in political science and closely adjacent fields through 2021---it is growing increasingly common [see, e.g., @Barcelo2026; @Graham2026].
+
+Typically the analyses to be consolidated have already been published in many different articles [see, e.g., @Schmid2020a].
+However, as @Goh2016 observes, meta-analysis can also be conducted to cumulate the evidence provided by on one's own analyses within a manuscript, a procedure that article labels "mini meta-analysis."
+Political scientists have recently begun to take advantage of this insight. @Perez2024 presents a mini meta-analysis of five original experiments on solidarity among people of color, and @Gazmararian2026 uses meta-analysis to summarize the results of four separate multilevel models of different climate shocks' effects on the likelihood that respondents to the 2019 World Risk Poll considered climate change to be among the top two risks to their safety in their daily lives.
+@Perez2025 analyses data from each of seven surveys on the relationship between partisanship and the prioritization of racial or American identification, presents the results, and then offers a mini meta-analysis of those findings.
+This last research design points toward the solution offered here: when many surveys include different items operationalizing the same concepts, perform original analyses of all of the available surveys, and use meta-analysis to combine the results.
+The novel analyses to be collectively assessed here number in the hundreds, making 'mini' seem an inaccurate descriptor of this meta-analytic technique.
+I therefore propose "original meta-analysis" as a more general label for meta-analyses of original studies. 
+
+To assess whether the difference between women and men in climate change concern is larger in richer countries than in poorer ones, the available cross-national surveys on climate concern are broken into their separate national components, yielding a total of `r n_ns_c` national surveys.
 These surveys often include multiple items tapping concern for climate change and thus provide multiple opportunities to observe the relationship between gender and climate concern; there are `r n_nsi_c` of these opportunities in total.
 In the language of meta-analysis, the analysis realized from each of these opportunities is a study.
-
-Correlation coefficients are frequently used in meta-analysis to bring results from different and otherwise incomparable analyses onto a common scale; because the sampling distribution of correlations is skewed, the Fisher's _z_ transformation is applied to each correlation to yield a normal distribution of effect sizes [see @Schmid2020a, 35; @Godefroidt2023, 25].
+Correlation coefficients are frequently used in meta-analysis to bring results from different and otherwise incomparable analyses onto a common scale; they are also equivalent to the simple regressions at the individual level of the main models of @Bush2023 [, 593, Table 1, Models 1 and 4].
+Because the sampling distribution of correlations is skewed, the Fisher's _z_ transformation is applied to each correlation to yield a normal distribution of effect sizes [see @Schmid2020a, 35; @Godefroidt2023, 25].
 Therefore, each study here consists of the _z_-transformed correlation of the individual-level indicator variable for a woman respondent with one survey item of climate concern in one country-year.
 
-```{r}
+```{r, cache=FALSE}
 #| label: fig-concern
-#| fig-cap: "In Richer Countries, Women Generally Express More Concern Than Men About Climate Change"
+#| fig-cap: "The Difference Between Women and Men in Climate Concern Is Generally Larger in Richer Countries Than in Poorer Countries"
 #| fig-height: 4
 
 c_plot <- cca_by_country %>%
@@ -1177,8 +1197,10 @@ The economic development of the country at the time of the survey, measured as i
 Analyses that seek to explain differences across studies---here, the differences in the observed correlations between gender and climate concern survey items---are known as meta-regressions [see @Higgins2020].
 The right panel of @fig-concern presents the results of a meta-regression of these correlations on economic development.
 This meta-regression takes into account the lack of independence across studies with a Bayesian multilevel model with varying intercepts for each country, survey, and item.
-Its results provide additional support for the finding of the main models of @Bush2023 for that article's first claim: women express more concern about climate change than men where GDP/capita is higher.
-As these results are based on over 7,000 national survey-items, an evidentiary base roughly 100 times the size of that presented in @Bush2023, we can now be much more confident that this claim is supported by the available evidence.
+Using a Bayesian approach allows the uncertainty in the correlations due to sampling error to be seamlessly incorporated into the model; the varying intercepts work to minimize the possibility that other particularities of the country, survey, or item of a study are not conflated with the context of economic development in which the study took place.
+
+The results provide additional support for the finding of the main models of @Bush2023 for that article's first claim: women express more concern about climate change than men where GDP/capita is higher.
+As these results are based on over 6,000 national survey-items, an evidentiary base roughly 80 times the size of that presented in @Bush2023, we can now be much more confident that this claim is supported by the available evidence.
 
 
 # Economic Development and Climate Change Concern 
@@ -1190,7 +1212,7 @@ This claim and these findings are both surprising.
 One of the most influential theories in comparative public opinion over the past half century, Inglehart's postmaterialism thesis, holds that as countries grow richer, the values of their citizens will shift beyond worries for order and immediate material security to broader concerns for individual autonomy and quality of life [see, e.g., @Inglehart1977; @Inglehart2005; @Inglehart2018], notably including the protection of the environment [see, e.g., @Inglehart1995; @Welzel2013].
 That is, the postmaterialism thesis would lead us to expect the opposite of the claim put forward in @Bush2023, that climate concern should be expected to be higher in richer countries than poorer ones.
 
-```{r n_s}
+```{r n_s, cache=FALSE}
 cca_by_survey <- rio::import(here("data",
                                   "cca_by_survey.rds"),
                              trust = TRUE)
@@ -1236,12 +1258,12 @@ cca_by_survey <- rio::import(here("data",
                                   "cca_by_survey.rds"),
                              trust = TRUE)
 
-meta_surveys <- cca_by_survey %>% 
+meta_surveys <- cca_by_survey |>  
   filter(item_category == "concern" &
            term == "log_gdppc") %>% 
-  nest(.by = model, .key = "results_df") %>% 
+  nest(.by = model, .key = "results_df") |> 
   mutate(meta = map(results_df, 
-                    ~ brm(estimate | se(std.error) ~ 
+                    ~ brm(z_r | se(se_zr) ~ 
                             1 + (1 | survey2 + item),
                           data = .x,
                           cores = 4,
@@ -1321,9 +1343,9 @@ dist_surveys <- tval_gdppc %>%
 
 ann_text2 <- meta_surveys1 %>% 
   group_by(model) %>% 
-  summarize(perc_pos = paste0(round(100*sum(Intercept > 0)/n(), 1),
+  summarize(perc_pos = paste0(sprintf("%.1f", 100*sum(Intercept > 0)/n()),
                               "%"),
-            perc_neg = paste0(round(100 - 100*sum(Intercept > 0)/n(), 1),
+            perc_neg = paste0(sprintf("%.1f", 100 - 100*sum(Intercept > 0)/n()),
                               "%"))
 
 meta_coef_surveys <- meta_surveys1 %>% 
@@ -1337,7 +1359,7 @@ meta_coef_surveys <- meta_surveys1 %>%
              strip.position = "left") +
   geom_text(aes(label = perc_pos), 
             y = .58,
-            x = .23,
+            x = .13,
             color = "grey45",
             data = ann_text2) +
   theme_bw() +
@@ -1374,7 +1396,7 @@ As in the previous section, the variety of different survey items on climate con
 In this case, a Bayesian multilevel meta-analysis of the conditional effects of logged GDP/capita that includes varying intercepts for each survey (as the results for different items in the same survey are not independent) and each distinct survey item (as the results for the same item asked in different surveys are not independent) is appropriate.
 
 The resulting posterior distributions of the meta-analysis coefficient for logged GDP/capita are shown in the right-hand panels of @fig-cca_gdppc.
-The vast bulk of each is positive: in even the smallest, the estimated effect of economic development for men, `r ann_text2 |> select(model == "Men") |> pull(perc_pos)` of the posterior is positive.
+The vast bulk of each is positive: in even the smallest, the estimated effect of economic development for men, `r ann_text2 |> filter(model == "Men") |> pull(perc_pos)` of the posterior is positive.
 Consistent with the postmaterialism thesis---and contrary to the second of the claims presented in @Bush2023---both women and men in richer countries generally express _more_ concern about climate change, not less, than people in poorer countries.
 
 
@@ -1463,7 +1485,7 @@ b_coef_plot <- spread_draws(benefit_cost_m1, b_log_gdppc) %>%
                                   ggtext::element_textbox_simple()))
 ```
 
-For this work, twenty-two cross-national surveys were identified that include one or more items that tap perceptions of the costs, benefits, or both of climate change mitigation.
+For the present work, twenty-two cross-national surveys were identified that include one or more items that tap perceptions of the costs, benefits, or both of climate change mitigation (details are presented in the supplemental materials).
 For example, the 2022 Risks That Matter survey [@OECD2023] asked how much concern respondents felt regarding "rising energy/fuel costs" due to "building up green infrastructure, emissions limits and carbon taxes," while Eurobarometer 95.1 asked respondents their agreement with the statement, "The costs of the damages due to climate change are much higher than the costs of the investments needed for a green transition" [@EC2023].
 As in the earlier examination of climate concern, these cross-national surveys are broken down into their 618 component national surveys with multiple items from a single survey each providing a separate study (all survey questions on the costs and benefits of mitigation are listed in the supplemental materials).
 This yields 1796 studies in all.
@@ -1784,7 +1806,7 @@ Survey-items included in the sample of questions tapping perceptions of the bene
 Excluded survey-items fell into three categories.
 The first comprises survey-items asking about the cause of climate change (e.g., "is climate change caused by natural processes, human activity, or both?").
 The second encompasses those questions that asked about individual behavior (e.g., "have you personally taken any action to fight climate change over the past six months?"), efficacy (e.g., "climate change is an unstoppable process, we cannot do anything about it"), interest (e.g., "in everyday life, we have to deal with many different issues, where we feel more or less interested. For each of the following, please indicate whether you are very interested, moderately interested, or not at all interested in: the environment and climate change"), subjective knowledge (e.g., "for each of these topics, can you tell me if you feel very well, fairly well, fairly badly or very badly informed? climate change"), or willingness to sacrifice (e.g., "would you be willing to give part of your income or pay more taxes, if you were sure that the extra money was used to: combat climate change?").
-The third consists of those survey-items probing support for particular policies to combat climate change (e.g., "the EU should invest massively in renewable energies, such as wind and solar power").
+The third consists of those survey-items probing support for particular policies to combat climate change (e.g., "the EU should invest massively in renewable energies, such as wind and solar power") or the relative importance of climate policy to other policy goals, such as reducing inequalities or economic growth.
 Although each of these groups of excluded questions are likely related to climate concern and/or an assessment of the benefits and costs of mitigation to some extent, they clearly represent distinct concepts.
 
 \pagebreak
