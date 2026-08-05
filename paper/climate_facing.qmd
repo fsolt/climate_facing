@@ -96,8 +96,9 @@ This reassessment assembles a comprehensive collection of data on climate change
 This much larger evidentiary base confirms that the difference in climate change concern between men and women is generally larger in richer countries.
 But relatively few surveys show men in richer countries expressing lower levels of climate change concern than men in poorer countries---in fact, consistent with postmaterialist theory [see, e.g., @Inglehart1977; @Inglehart2005; @Inglehart2018], meta-analysis of the available cross-national surveys indicates the opposite is the case.
 Moreover, a meta-analysis of surveys directly asking respondents to assess the costs, benefits, or both of policies fighting climate change show little to no differences between men and women in these attitudes.
-Together, these results suggest that gender norms play a very different role in climate change attitudes than that suggested in @Bush2023, reflecting not greater loss aversion among those with more to lose but instead norms of masculine fearlessness that influence men's responses to a greater degree in richer countries.
-A final meta-analysis of concern across a wide range of different potential threats support this latter argument: from worries about violent crime through anxieties about food and drinking water to fears of identity theft, the gap in expressed levels of concern between women and men is greater in richer countries.
+XXXXX
+<!-- Together, these results suggest that gender norms play a very different role in climate change attitudes than that suggested in @Bush2023, reflecting not greater loss aversion among those with more to lose but instead norms of masculine fearlessness that influence men's responses to a greater degree in richer countries. -->
+<!-- A final meta-analysis of concern across a wide range of different potential threats support this latter argument: from worries about violent crime through anxieties about food and drinking water to fears of identity theft, the gap in expressed levels of concern between women and men is greater in richer countries. -->
 
 ```{r setup, include=FALSE}
 options(tinytex.verbose = TRUE)
@@ -1080,7 +1081,7 @@ Despite long-standing advice to maximize the evidence employed to test theories 
 This is understandable given the difficulty of incorporating the evidence provided by different items from different surveys.
 Simply presenting and interpreting separate analyses of each of the available survey-items is straighforward, at least superficially, but the feasibility of this approach collapses as the number of survey-items increases and the results their analysis provide diverge.
 Pooling multiple surveys provides a means to bring more data to bear, but it depends on identical items and response categories across the surveys: a long literature on question wording effects cautions against pooling even such similar questions as "How concerned are you about climate change?" (asked in the Life in Transition Survey, Wave 2) and "How concerned are you, if at all, that global climate change will harm you personally at some point in your lifetime?" (asked in the 2015 Pew Global Attitudes Survey) together in a single analysis [see, e.g., @Rugg1941; @Krosnick2014; @Solt2016].
-A diversity of items enables a variety of techniques to minimize measurement error---including principal components analyses (PCA), item response theory models (IRT), and weighted scales indices (WSI)---but these methods of combining multiple items into a single dependent variable depend on those items being answered by the same respondents [see, e.g., @Stoetzer2025; @Fu2025]. 
+A diversity of items enables a variety of techniques to minimize measurement error---including principal components analyses (PCA), item response theory models (IRT), and weighted scales indices (WSI)---but these methods of combining multiple items into a single dependent variable depend on those items being answered by the same respondents [see, e.g., @Stoetzer2025; @Fu2026]. 
 Recent contributions to the study of comparative public opinion have dealt with the issue of incomparability across surveys and items by estimating latent variables [see, e.g., @Claassen2020a; @Woo2023; @Woo2025]; these methods, however, typically generate measures at the country-year level and so prevent examination of individual-level variables like gender [but see @Caughey2019].
 
 Meta-analysis supplies an approach to resolving these complications.
@@ -1097,8 +1098,8 @@ As the novel analyses to be collectively assessed in the present work number in 
 The original meta-analysis to assess the evidence for the first claim of @Bush2023, then, proceeds as follows.
 First, mirroring exactly the main analyses of @Bush2023, equation @eq-main is estimated for each of the `r n_items |> filter(item_category == "concern" & n_country >= 10) |> nrow()` cross-national survey-items of climate concern, with logistic regression employed for responses to dichotomous survey items, ordinal logistic regression for survey items with three or four ordered response categories, and linear regression for items with five or more ordered response categories.
 In the language of meta-analysis, each of these analyses is a study.
-Next, following standard meta-analytic practice [see, e.g., @Schmid2020a, 35], the estimates of the coefficient for the change in the difference across genders with economic development (that is, $\gamma_{11}$) are converted to correlations to bring them to a common scale, and because the sampling distribution of correlations is skewed, the Fisher's _z_ transformation is applied to each correlation to yield a normal distribution of effect sizes.
-Finally, these correlations are themselves modeled in a Bayesian multilevel model that includes varying intercepts for each survey (as the results for different items in the same survey are not independent) and each distinct survey item (as the results for the same item asked in different surveys are not independent); the use of a Bayesian approach allows the uncertainty in the correlations due to sampling error to be seamlessly incorporated into the model.
+Next, following standard meta-analytic practice [see, e.g., @Schmid2020a, 35; @Godefroidt2023, 25], the estimate of the coefficient for the change in the difference across genders with economic development (that is, $\gamma_{11}$) from each study is converted to a correlation to impose a common scale, and because the sampling distribution of correlations is skewed, the Fisher's _z_ transformation is applied to each correlation to yield a normal distribution of effect sizes.
+Finally, these effect sizes are themselves modeled in a Bayesian multilevel model that includes varying intercepts for each survey (as the results for different items in the same survey are not independent) and each distinct survey item (as the results for the same item asked in different surveys are not independent); the use of a Bayesian approach allows the uncertainty in the correlations due to sampling error to be seamlessly incorporated into the model.^[XXXXX on meta-regression]
 
 ```{r meta-surveys-fxg, eval=FALSE}
 meta_surveys_fxg <- cca_by_survey |>  
@@ -1128,7 +1129,7 @@ rio::export(meta_surveys1_fxg, here("data",
 ```{r, cache=FALSE}
 #| label: fig-concern
 #| fig-cap: "The Difference Between Women and Men in Climate Concern Is Generally Larger in Richer Countries Than in Poorer Countries"
-#| fig-height: 4
+#| fig-height: 3.5
 meta_surveys1_fxg <- rio::import(here("data",
                                   "meta_surveys1_fxg.rds"),
                              trust = TRUE)
@@ -1233,14 +1234,14 @@ The correlation between respondents' gender and their climate concern expressed 
 The economic development of the country at the time of the survey, measured as in @Bush2023 as the log of GDP/capita, is on the _x_-axis.
 
 The left panel displays the distribution of _t_\nobreakdashes-values for the coefficients of the interaction between gender and logged GDP/capita across studies.
-The findings are not consistent.
+The findings are not consistent across studies.
 Some studies yield negative values, indicating a _decreasing_ climate gender gap; in `r ann_text_fxg$perc[[1]]` of the studies, this negative result even reaches statistical significance at the 95% level.
 Most studies do give positive values for $\gamma_{11}$, though only in `r ann_text_fxg$perc[[2]]` of the studies do the coefficient estimates reach statistically significance at that level.
 Were a researcher to examine only one or a few survey-items, as in @Bush2023, the conclusion reached would depend on which surveys and items were analyzed.
 Even with the full distribution of study results, it is not immediately evident whether the claim that the climate gender gap is larger in richer countries than in poorer ones is supported: about seven in ten studies yield a null result.
 
 The right panel, however, displays the posterior probability distribution of the meta-analysis coefficient that consolidates these findings.
-It indicates that, taking into account the dependence between studies of items in the same survey and studies of the same item in different surveys and conditional on this collection of the available data as well as the uninformative prior, the probability that the correlation between whether a respondent is a woman and the climate concern that respondent expresses is larger at higher levels of economic development is over 98%. 
+It indicates that, taking into account the dependence between studies of items in the same survey and studies of the same item in different surveys (and conditional on this collection of the available data as well as the uninformative prior), the probability that the correlation between whether a respondent is a woman and the climate concern that respondent expresses is larger at higher levels of economic development is over 98%. 
 This result provides support for the finding of the main models of @Bush2023 for that article's first claim: women express increasingly more concern about climate change than men where GDP/capita is higher.
 As this conclusion is based on a comprehensive set of cross-national survey-items on the topic, an evidentiary base roughly 90 times the size of that presented in @Bush2023, we can now be much more confident that this first claim is supported by the available evidence.
 
@@ -1307,7 +1308,7 @@ rio::export(meta_surveys1, here("data",
 ```{r, cache=FALSE}
 #| label: fig-cca_gdppc
 #| fig-cap: "Both Men and Women Tend to Express More Concern About Climate Change in Richer Countries Than in Poorer Countries"
-#| fig-height: 4.5
+#| fig-height: 3.5
 meta_surveys1 <- rio::import(here("data",
                                   "meta_surveys1.rds"),
                              trust = TRUE)
@@ -1412,7 +1413,7 @@ dist_surveys + meta_coef_surveys +
 
 @fig-cca_gdppc shows the findings.
 The panels on the left side display the distribution of _t_\nobreakdashes-values of the coefficients for logged GDP/capita in these analyses, with the top and middle panels showing estimated conditional effects for men and for women calculated using @eq-interaction and the bottom panel the estimated effect on all respondents when the interaction term is omitted from the model.
-Only a small share of these cross-national analyses evince a statistically significant negative relationship between economic development and concern for climate change similar to those presented in @Bush2023.
+Only about one in ten of these cross-national analyses evince a statistically significant negative relationship between economic development and concern for climate change similar to those presented in @Bush2023.
 On the contrary, most estimated effects are positive, and a large share are both positive and statistically significant at the 95% level.
 
 As in the previous section, meta-analysis provides the means of reaching conclusions based on all of the available evidence.
@@ -1563,7 +1564,7 @@ meta_coef_surveys_cb <- meta_surveys1_cb %>%
                   #                 ggtext::element_textbox_simple()))
 ```
 
-For the present work, `r n_items |> filter(item_category == "cost-benefit" & n_country >= 10) |> pull(survey2) |> n_distinct()` cross-national surveys were identified that include one or more items that tap perceptions of the costs, benefits, or both of climate change mitigation (details are presented in the supplemental materials).
+For the present work, `r n_items |> filter(item_category == "cost-benefit" & n_country >= 10) |> pull(survey2) |> n_distinct()` cross-national surveys were identified that include one or more items that tap perceptions of the costs, benefits, or both of climate change mitigation that were asked in ten or more countries (details are presented in the supplemental materials).
 For example, the 2022 Risks That Matter survey [@OECD2023] asked how much concern respondents felt regarding "rising energy/fuel costs" due to "building up green infrastructure, emissions limits and carbon taxes," while Eurobarometer 95.1 asked respondents their agreement with the statement, "The costs of the damages due to climate change are much higher than the costs of the investments needed for a green transition" [@EC2023].
 As in the earlier examination of climate concern, multiple items in these cross-national surveys are each analysed as a separate study (all survey questions on the costs and benefits of mitigation are listed in the supplemental materials).
 This yields `r n_items |> filter(item_category == "cost-benefit" & n_country >= 10) |> nrow()` studies in all.
