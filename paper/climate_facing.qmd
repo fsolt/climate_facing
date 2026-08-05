@@ -1129,7 +1129,7 @@ rio::export(meta_surveys1_fxg, here("data",
 ```{r, cache=FALSE}
 #| label: fig-concern
 #| fig-cap: "The Difference Between Women and Men in Climate Concern Is Generally Larger in Richer Countries Than in Poorer Countries"
-#| fig-height: 3.5
+#| fig-height: 2.7
 meta_surveys1_fxg <- rio::import(here("data",
                                   "meta_surveys1_fxg.rds"),
                              trust = TRUE)
@@ -1308,7 +1308,7 @@ rio::export(meta_surveys1, here("data",
 ```{r, cache=FALSE}
 #| label: fig-cca_gdppc
 #| fig-cap: "Both Men and Women Tend to Express More Concern About Climate Change in Richer Countries Than in Poorer Countries"
-#| fig-height: 3.5
+#| fig-height: 4.5
 meta_surveys1 <- rio::import(here("data",
                                   "meta_surveys1.rds"),
                              trust = TRUE)
