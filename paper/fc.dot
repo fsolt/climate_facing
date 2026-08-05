@@ -22,6 +22,11 @@ digraph flowchart {
             fixedsize = true,
             width = .9,
             height = .93];
+        S1 [shape = rect,
+            style = invis,
+            fixedsize = true,
+            height = 1];
+        S0 -> S1 [style = invis, weight = 10];
         style = filled;
         fillcolor = "#F0F4FF";
         label = "Screening";
@@ -49,25 +54,32 @@ digraph flowchart {
             width = 4.3,
             height = 1.2];
             
-      all1 [label = "Survey-items identified from:\n —DCPOtools codebooks search (n = 404)\l —Survey archives searches (n = 15)\l —Web searches (n = 62)\l"];
-      all2 [label = "Survey-items assessed for\nrelevance (n = 481)"];
-      incl [label = "Survey-items included in\nstudy (n = 334)"];
-      excl [label = "Survey-items excluded (total n = 147):\n —policy preferences (n = 80)\l —individual behavior, interest, efficacy (n = 46)\l —beliefs regarding cause (n = 21)\l"];
-      concern [label = "Survey-items on concern\nincluded in analysis\n(n = 271)", width = 2.8];
+      all1 [label = "Survey-items identified from:\n —DCPOtools codebooks search (n = 406)\l —Survey archives searches (n = 15)\l —Web searches (n = 62)\l"];
+      all2 [label = "Survey-items assessed for\nrelevance (n = 483)"];
+      incl0 [label = "Survey-items assessed for\neligibility (n = 332)"];
+      incl [label = "Survey-items included in\nstudy (n = 328)"];
+      excl [label = "Survey-items excluded (total n = 151):\n —policy preferences (n = 80)\l —individual behavior, interest, efficacy (n = 49)\l —beliefs regarding cause (n = 22)\l"];
+      small [label = "Survey-items excluded for\nincluding fewer than\nten countries (n = 4)"];
+      concern [label = "Survey-items on concern\nincluded in analysis\n(n = 265)", width = 2.8];
       cost [label = "Survey-items on costs and/or\nbenefits included in analysis\n(n = 63)", width = 2.8];
       
       # edge definitions with the node IDs
       all1 -> all2;
-      all2 -> incl;
+      all2 -> incl0;
       all2 -> excl;
+      incl0 -> small;
+      incl0 -> incl;
       incl -> concern;
       incl -> cost [constraint = false];
       
-      I0 -> S0 -> C0 [style = invis, weight = 10]
+      I0 -> S0 -> S1 -> C0 [style = invis, weight = 10]
 
       # subgraphs for horizontal alignment
       subgraph {
         rank = same; all2; excl;
+      }
+      subgraph {
+        rank = same; incl0; small;
       }
       subgraph {
         rank = same; concern; cost;
