@@ -1067,7 +1067,7 @@ r_{0j} + r_{1j}Women_{ij}
 \end{aligned}
 $$ {#eq-main}
 
-That is, they are hierarchical models with varying intercepts for each country ($r_{0j}$), varying slopes for the coefficient for the gender of the respondent in each country ($r_{1j}$), and a cross-level multiplicative interaction between country economic development and respondent gender (captured by $\gamma_{11}$). 
+That is, they are two-level hierarchical models with varying intercepts for each country ($r_{0j}$), varying slopes for the coefficient for the gender of the respondent in each country ($r_{1j}$), and a cross-level multiplicative interaction between country economic development and respondent gender (captured by $\gamma_{11}$). 
 Positive values of $\gamma_{11}$ indicate support for this first claim.
 And the estimates of $\gamma_{11}$ are in fact positive in models of one item on climate concern from the 2016/2017 AmericasBarometer (Model 1), and one item from the 2015 Pew Global Attitudes Survey (Model 4), as well as one item from a ten-country survey conducted by the work's authors in 2019-2020 (600, Figure 4), providing evidence that the difference in climate concern expressed by women and men is larger in richer countries.
 
@@ -1088,7 +1088,7 @@ Meta-analysis supplies an approach to resolving these complications.
 Meta-analysis provides a tool to "consolidate the overall effect size" from many analyses [@Godefroidt2023, 25].
 Although meta-analysis has not been frequently employed in political science---@Arel-Bundock2026 [, 38] counts just 85 articles employing the method across 141 journals in political science and closely adjacent fields through 2021---it is growing increasingly common in the discipline [see, e.g., @Barcelo2026; @Graham2026].
 
-Typically the analyses to be consolidated have already been published in many different articles [see, e.g., @Schmid2020a], but as @Goh2016 observes that one can also conduct meta-analysis to cumulate the evidence provided by one's own original analyses within the same manuscript, a procedure that article labels "mini meta-analysis."
+Typically the analyses to be consolidated have already been published in many different articles [see, e.g., @Schmid2020a], but @Goh2016 observes that one can also conduct meta-analysis to cumulate the evidence provided by one's own original analyses within the same manuscript, a procedure that article labels "mini meta-analysis."
 Political scientists have recently begun to take advantage of this technique.
 @Perez2024 presents a mini meta-analysis of five original experiments on solidarity among people of color, and @Gazmararian2026 uses meta-analysis to summarize the results of four separate multilevel models of different climate shocks' effects on the likelihood that respondents to the 2019 World Risk Poll considered climate change to be among the top two risks to their safety in their daily lives.
 @Perez2025 analyses data from each of seven surveys on the relationship between partisanship and the prioritization of racial or American identification, presents the separate results, and offers a mini meta-analysis of those findings.
@@ -1126,7 +1126,7 @@ rio::export(meta_surveys1_fxg, here("data",
                                     "meta_surveys1_fxg.rds"))
 ```
 
-```{r, cache=FALSE}
+```{r}
 #| label: fig-concern
 #| fig-cap: "The Difference Between Women and Men in Climate Concern Is Generally Larger in Richer Countries Than in Poorer Countries"
 #| fig-height: 2.7
@@ -1176,7 +1176,7 @@ dist_surveys_fxg <- tval_gdppc_fxg %>%
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank(),
         strip.background = element_blank(),
-        strip.text = element_text(size = 9,
+        strip.text = element_text(size = 8,
                                   angle = 0,
                                   hjust = 0),
         plot.subtitle = ggtext::element_markdown(hjust = 0.5)) +
@@ -1224,24 +1224,21 @@ meta_coef_surveys_fxg <- meta_surveys1_fxg %>%
                                   nrow(),
                                 "Cross-National Studies"),
                   subtitle = "Coefficients for the Interaction of Gender and Logged GDP/Capita",
-                  caption = "Notes: Estimates of Equation 1.",
+                  caption = "Note: Estimates of Equation 1.",
                   theme = theme(plot.caption =
                                   ggtext::element_textbox_simple()))
 ```
 
 These results are plotted in @fig-concern.
-The correlation between respondents' gender and their climate concern expressed in a single survey item appears on the _y_-axis; the vertical whiskers on each point represent uncertainty in the correlation due to sampling error.
-The economic development of the country at the time of the survey, measured as in @Bush2023 as the log of GDP/capita, is on the _x_-axis.
-
 The left panel displays the distribution of _t_\nobreakdashes-values for the coefficients of the interaction between gender and logged GDP/capita across studies.
-The findings are not consistent across studies.
-Some studies yield negative values, indicating a _decreasing_ climate gender gap; in `r ann_text_fxg$perc[[1]]` of the studies, this negative result even reaches statistical significance at the 95% level.
+The findings of these studies are not consistent.
+Some studies yield negative values, indicating a _smaller_ climate gender gap in richer countries; in `r ann_text_fxg$perc[[1]]` of the studies, this negative result even reaches statistical significance at the 95% level.
 Most studies do give positive values for $\gamma_{11}$, though only in `r ann_text_fxg$perc[[2]]` of the studies do the coefficient estimates reach statistically significance at that level.
 Were a researcher to examine only one or a few survey-items, as in @Bush2023, the conclusion reached would depend on which surveys and items were analyzed.
-Even with the full distribution of study results, it is not immediately evident whether the claim that the climate gender gap is larger in richer countries than in poorer ones is supported: about seven in ten studies yield a null result.
+Even with the full distribution of study results, it is not immediately evident whether the claim that the climate gender gap is larger in richer countries than in poorer ones is supported by the available evidence: about seven in ten studies yield a null result.
 
-The right panel, however, displays the posterior probability distribution of the meta-analysis coefficient that consolidates these findings.
-It indicates that, taking into account the dependence between studies of items in the same survey and studies of the same item in different surveys (and conditional on this collection of the available data as well as the uninformative prior), the probability that the correlation between whether a respondent is a woman and the climate concern that respondent expresses is larger at higher levels of economic development is over 98%. 
+The right panel of @fig-concern, however, displays the posterior probability distribution of the meta-analysis coefficient that consolidates all of these findings.
+It indicates that, taking into account the dependence between studies of items in the same survey and studies of the same item in different surveys (and, of course, conditional on this collection of the available data as well as the uninformative, uniform prior), the probability that the correlation between whether a respondent is a woman and the climate concern that respondent expresses is larger at higher levels of economic development is over 98%. 
 This result provides support for the finding of the main models of @Bush2023 for that article's first claim: women express increasingly more concern about climate change than men where GDP/capita is higher.
 As this conclusion is based on a comprehensive set of cross-national survey-items on the topic, an evidentiary base roughly 90 times the size of that presented in @Bush2023, we can now be much more confident that this first claim is supported by the available evidence.
 
@@ -1255,7 +1252,7 @@ This claim and these findings are both surprising.
 One of the most influential theories in comparative public opinion over the past half century, Inglehart's postmaterialism thesis, holds that as countries grow richer, the values of their citizens will shift beyond worries for order and immediate material security to broader concerns for individual autonomy and quality of life [see, e.g., @Inglehart1977; @Inglehart2005; @Inglehart2018], notably including the protection of the environment [see, e.g., @Inglehart1995; @Welzel2013].
 That is, the postmaterialism thesis would lead us to expect the opposite of the claim put forward in @Bush2023, that climate concern should be expected to be higher in richer countries than poorer ones.
 
-```{r n_s, cache=FALSE}
+```{r n_s}
 cca_by_survey <- rio::import(here("data",
                                   "cca_by_survey.rds"),
                              trust = TRUE)
@@ -1274,7 +1271,7 @@ The interaction term in @eq-main means the estimated conditional effect of econo
 $$
 \frac{\partial Concern_{ij}}{\partial Log(GDP/capita)_j} = \gamma_{01} + \gamma_{11}Women_{ij}
 $$ {#eq-interaction}
-Estimates of this conditional effect were calculated for women and for men from each of the `r n_items |> filter(item_category == "concern" & n_country >= 10) |> nrow()` studies described above and similarly converted to correlations with the Fisher's _z_ transformation applied.
+Estimates of this conditional effect are calculated for women and for men from each of the `r n_items |> filter(item_category == "concern" & n_country >= 10) |> nrow()` studies described above and similarly converted to correlations with the Fisher's _z_ transformation applied.
 And again, these correlations are themselves modeled in a Bayesian multilevel model with varying intercepts for each survey and for each survey item that also incorporates the uncertainty in the correlations due to sampling error.
 
 ```{r meta-surveys, eval=FALSE}
@@ -1305,10 +1302,10 @@ rio::export(meta_surveys1, here("data",
                                 "meta_surveys1.rds"))
 ```
 
-```{r, cache=FALSE}
+```{r}
 #| label: fig-cca_gdppc
 #| fig-cap: "Both Men and Women Tend to Express More Concern About Climate Change in Richer Countries Than in Poorer Countries"
-#| fig-height: 4.5
+#| fig-height: 4.25
 meta_surveys1 <- rio::import(here("data",
                                   "meta_surveys1.rds"),
                              trust = TRUE)
@@ -1357,7 +1354,7 @@ dist_surveys <- tval_gdppc %>%
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank(),
         strip.background = element_blank(),
-        strip.text = element_text(size = 9,
+        strip.text = element_text(size = 8,
                                   angle = 0,
                                   hjust = 0),
         plot.subtitle = ggtext::element_markdown(hjust = 0.5)) +
@@ -1422,20 +1419,44 @@ The vast bulk of each is positive: in even the smallest, the estimated effect of
 Consistent with the postmaterialism thesis---and contrary to the second of the claims presented in @Bush2023---both women and men in richer countries generally express _more_ concern about climate change, not less, than people in poorer countries.
 
 
-# Gender and Perceptions of the Benefits and Costs of Mitigation
+# Gender, Economic Development, and Perceptions of the Benefits and Costs of Mitigation
 
-The third claim @Bush2023 [, 598] advances is that people in richer countries, and particularly men, perceive themselves as having less to gain and more to lose from the major economic and social changes required to mitigate climate change, and their aversion to these losses leads them to express less concern for the problem.
+The third claim @Bush2023 [, 597-598] advances is that in richer countries relative to poorer countries, both men and women, but particularly men, perceive themselves as having less to gain and more to lose from the major economic and social changes required to mitigate climate change.
+It is their aversion to these losses, that article asserts, that leads them to express less concern for the problem.
 The evidence that work presents is based on text analyses of open-ended questions in an original ten-country survey and of focus groups conducted in the United States and Peru; it puts forward no evidence based on more typical survey items.
+Putting aside for the moment that the meta-analyses above show that people in richer countries do _not_ express less concern for climate change, we turn then to an examination of the available evidence on how the perceived benefits and costs of decarbonization vary with economic development and gender.
 
 ```{r meta-surveys-cb, eval=FALSE}
 cca_by_survey <- rio::import(here("data",
                                   "cca_by_survey.rds"),
                              trust = TRUE)
 
-meta_surveys_cb <- cca_by_survey |>  
+meta_surveys_cbi <- cca_by_survey |>  
   filter(item_category == "cost-benefit" &
            model == "Men" &
            term == "female:log_gdppc") %>% 
+  nest(.by = model, .key = "results_df") |> 
+  mutate(meta = map(results_df, 
+                    ~ brm(z_r | se(se_zr) ~ 
+                            1 + (1 | survey2 + item),
+                          data = .x,
+                          cores = 4,
+                          iter = 800,
+                          backend = "cmdstanr",
+                          control = list(adapt_delta = 0.99, 
+                                         max_treedepth = 20))))
+
+meta_surveys1_cbi <- meta_surveys_cbi %>% 
+  mutate(meta_draws = map(meta, ~ spread_draws(.x, Intercept))) %>% 
+  unnest(meta_draws) %>% 
+  select(-results_df, -meta)
+
+rio::export(meta_surveys1_cbi, here("data",
+                                   "meta_surveys1_cbi.rds"))
+
+meta_surveys_cb <- cca_by_survey |>  
+  filter(item_category == "cost-benefit" &
+           term == "log_gdppc") %>% 
   nest(.by = model, .key = "results_df") |> 
   mutate(meta = map(results_df, 
                     ~ brm(z_r | se(se_zr) ~ 
@@ -1456,18 +1477,22 @@ rio::export(meta_surveys1_cb, here("data",
                                    "meta_surveys1_cb.rds"))
 ```
 
-```{r, cache=FALSE}
+```{r}
 #| label: fig-benefit
-#| fig-cap: "In Richer (and Poorer) Countries, Women and Men Generally Perceive the Benefits and Costs of Mitigation No Differently"
-#| fig-height: 4.5
+#| fig-cap: "Perceptions of Mitigation's Benefits vs Costs Generally _Increase_ with Level of Development"
+#| fig-height: 4.25
+
 meta_surveys1_cb <- rio::import(here("data",
                                      "meta_surveys1_cb.rds"),
                                 trust = TRUE)
 
+# x_lims_dist <- c(-4, 6.5)
+# x_brks_dist <- seq(-4, 6, 2)
+# x_lims_coef <- c(-.10, .152)
+
 tval_gdppc_cb <- cca_by_survey %>% 
-  filter(str_detect(item_category, "cost-benefit") &
-           model == "Men" &
-           term == "female:log_gdppc") %>% 
+  filter(term == "log_gdppc" &
+           str_detect(item_category, "cost-benefit")) %>% 
   mutate(sig = as_factor(case_when(statistic <= -1.96 ~ -1,
                                    statistic >= 1.96 ~ 1,
                                    .default = 0)),
@@ -1481,8 +1506,8 @@ ann_text_cb <- tval_gdppc_cb %>%
   mutate(perc = paste0(round(100 * sig_count/sum(sig_count)), "%")) %>% 
   select(-sig_count) %>% 
   filter(!sig == 0) %>% 
-  mutate(statistic = if_else(sig == -1, -3, 2.5),
-         y = if_else(sig == -1, 3, 2.7))
+  mutate(statistic = if_else(sig == -1, -2.5, 4),
+         y = if_else(sig == -1, 5, 7))
 
 dist_surveys_cb <- tval_gdppc_cb %>% 
   ggplot(aes(x = statistic, fill = sig)) +
@@ -1495,8 +1520,13 @@ dist_surveys_cb <- tval_gdppc_cb %>%
   geom_vline(xintercept = 0,
              color = "grey10",
              linetype = 2) +
+  facet_wrap(model ~ ., 
+             ncol = 1,
+             strip.position = "left") +
   geom_text(aes(label = perc, y = y, color = sig), data = ann_text_cb) +
-  scale_x_continuous(breaks=seq(-6, 10, 2)) +
+  # scale_x_continuous(limits = x_lims_dist,
+  #                    breaks = x_brks_dist, 
+  #                    oob = scales::oob_keep) +
   scale_fill_manual(breaks = c(-1, 0 , 1),
                     values = c("grey60", "white", "grey45")) +
   scale_color_manual(breaks = c(-1, 0 , 1),
@@ -1506,7 +1536,7 @@ dist_surveys_cb <- tval_gdppc_cb %>%
         axis.ticks.y = element_blank(),
         axis.text.y = element_blank(),
         strip.background = element_blank(),
-        strip.text = element_text(size = 9,
+        strip.text = element_text(size = 8,
                                   angle = 0,
                                   hjust = 0),
         plot.subtitle = ggtext::element_markdown(hjust = 0.5)) +
@@ -1527,17 +1557,154 @@ meta_coef_surveys_cb <- meta_surveys1_cb %>%
   geom_vline(xintercept = 0,
              color = "grey10",
              linetype = 2) +
+  facet_wrap(model ~ ., 
+             ncol = 1,
+             strip.position = "left") +
+  geom_text(aes(label = perc_pos), 
+            y = .58,
+            x = .13,
+            color = "grey45",
+            data = ann_text2_cb) +
+  theme_bw() +
+  # scale_x_continuous(limits = x_lims_coef) +
+  theme(legend.position = "none",
+        strip.background = element_blank(),
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        strip.text = element_blank(),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  scale_fill_manual(breaks = c(TRUE, FALSE),
+                    values = c("grey60", "grey45")) +
+  scale_color_manual(breaks = c(TRUE, FALSE),
+                     values = c("grey60", "grey45")) +
+  labs(subtitle = "Meta-Analysis Coefficient") +
+  xlab(NULL) +
+  ylab(NULL) 
+
+# top_plots <- (dist_surveys_cb | meta_coef_surveys_cb) +
+#   plot_annotation(title = paste0("Economic Development and Perception of Benefits vs Costs by Gender",
+#                                  " in\n",
+#                                 n_items |>
+#                                   filter(item_category == "cost-benefit" & n_country >= 10) |>
+#                                   nrow(),
+#                                 " Cross-National Studies"),
+#                   subtitle = "Coefficients for Logged GDP/Capita by Gender")
+# 
+# bottom_plots <- dist_surveys_cbi + meta_coef_surveys_cbi +
+#   plot_annotation(subtitle = "Coefficients for the Interaction of Gender and Logged GDP/Capita")
+# 
+# (wrap_elements(top_plots) / wrap_elements(bottom_plots)) +
+#   plot_layout(heights = c(4, 2))
+
+(dist_surveys_cb | meta_coef_surveys_cb) +
+  plot_annotation(title = paste0("Economic Development and Perception of Benefits vs Costs by Gender",
+                                 " in\n",
+                                n_items |>
+                                  filter(item_category == "cost-benefit" & n_country >= 10) |>
+                                  nrow(),
+                                " Cross-National Studies"),
+                  subtitle = "Coefficients for Logged GDP/Capita by Gender")
+```
+
+For the present work, `r n_items |> filter(item_category == "cost-benefit" & n_country >= 10) |> pull(survey2) |> n_distinct()` cross-national surveys were identified that include one or more items that tap perceptions of the costs, benefits, or both of climate change mitigation that were asked in ten or more countries (details are presented in the supplemental materials).
+For example, the 2022 Risks That Matter survey [@OECD2023] asked how much concern respondents felt regarding "rising energy/fuel costs" due to "building up green infrastructure, emissions limits and carbon taxes," while Eurobarometer 95.1 asked respondents their agreement with the statement, "The costs of the damages due to climate change are much higher than the costs of the investments needed for a green transition" [@EC2023].
+
+As in the foregoing examination of climate concern, multiple items in these cross-national surveys are each analysed as a separate study in a multilevel model parallel to the model of climate concern described by equation @eq-main.
+This yields `r n_items |> filter(item_category == "cost-benefit" & n_country >= 10) |> nrow()` studies in all.
+Following the same procedure described above, the _z_-transformed correlation between the dichotomous gender variable and perceptions of the benefits versus costs of mitigation is calculated for each of these studies.
+The responses to all of these items were recoded so that higher values indicate perceptions of greater benefits and/or lower costs of climate change mitigation (see the supplemental materials).
+Therefore, if perceptions of the costs of climate change mitigation relative to its benefits are greater where economic development is higher, as @Bush2023 argues, the coefficients for logged GDP/capita by gender will be negative.
+And if this is pattern is especially pronounced among men, the coefficient for the interaction between the indicator variable for a woman respondent and logged GDP/capita will be positive.
+
+```{r}
+#| label: fig-benefit2
+#| fig-cap: "Evidence Does Not Indicate That Variation by Gender in Perceptions of Mitigation's Benefits vs Costs Increases with Economic Development"
+#| fig-height: 2.5
+meta_surveys1_cbi <- rio::import(here("data",
+                                     "meta_surveys1_cbi.rds"),
+                                trust = TRUE)
+
+tval_gdppc_cbi <- cca_by_survey %>% 
+  filter(str_detect(item_category, "cost-benefit") &
+           model == "Men" &
+           term == "female:log_gdppc") %>% 
+  mutate(sig = as_factor(case_when(statistic <= -1.96 ~ -1,
+                                   statistic >= 1.96 ~ 1,
+                                   .default = 0)),
+         project = str_extract(survey2, "[a-z]+"),
+         project = if_else(project == "feb", "eb", project))
+
+ann_text_cbi <- tval_gdppc_cbi %>% 
+  group_by(model, sig) %>% 
+  summarize(sig_count = n(),
+            .groups = "drop_last") %>% 
+  mutate(perc = paste0(round(100 * sig_count/sum(sig_count)), "%")) %>% 
+  select(-sig_count) %>% 
+  filter(!sig == 0) %>% 
+  mutate(statistic = if_else(sig == -1, -3, 2.5),
+         y = if_else(sig == -1, 4, 5))
+
+dist_surveys_cbi <- tval_gdppc_cbi %>% 
+  ggplot(aes(x = statistic, fill = sig)) +
+  geom_histogram(binwidth = .49,
+                 boundary = 0,
+                 color = "grey35") +
+  geom_vline(xintercept = c(-1.96, 1.96),
+             color = "grey70",
+             linetype = 2) +
+  geom_vline(xintercept = 0,
+             color = "grey10",
+             linetype = 2) +  
+  # facet_wrap(model ~ ., 
+  #            ncol = 1,
+  #            strip.position = "left") +
+  geom_text(aes(label = perc, y = y, color = sig), data = ann_text_cbi) +
+  # scale_x_continuous(limits = x_lims_dist,
+  #                    breaks = x_brks_dist, 
+  #                    oob = scales::oob_keep) +
+  scale_fill_manual(breaks = c(-1, 0 , 1),
+                    values = c("grey60", "white", "grey45")) +
+  scale_color_manual(breaks = c(-1, 0 , 1),
+                     values = c("grey60", "white", "grey45")) +
+  theme_bw() +
+  theme(legend.position = "none",
+        axis.ticks.y = element_blank(),
+        axis.text.y = element_blank(),
+        strip.background = element_blank(),
+        strip.text = element_text(size = 8,
+                                  angle = 0,
+                                  hjust = 0,
+                                  color = "white"),
+        plot.subtitle = ggtext::element_markdown(hjust = 0.5)) +
+  labs(subtitle = "Distribution of Coefficient _t_-values Across Studies") +
+  xlab(NULL) +
+  ylab(NULL)
+
+ann_text2_cbi <- meta_surveys1_cbi %>% 
+  group_by(model) %>% 
+  summarize(perc_pos = paste0(sprintf("%.1f", 100*sum(Intercept > 0)/n()),
+                              "%"),
+            perc_neg = paste0(sprintf("%.1f", 100 - 100*sum(Intercept > 0)/n()),
+                              "%"))
+
+meta_coef_surveys_cbi <- meta_surveys1_cbi %>% 
+  ggplot(aes(x = Intercept)) +
+  stat_halfeye(aes(fill = after_stat(x < 0))) +
+  geom_vline(xintercept = 0,
+             color = "grey10",
+             linetype = 2) +  
   geom_text(aes(label = perc_pos), 
             y = .58,
             x = .07,
             color = "grey45",
-            data = ann_text2_cb) +
+            data = ann_text2_cbi) +
   geom_text(aes(label = perc_neg), 
             y = .58,
             x = -.06,
             color = "grey60",
-            data = ann_text2_cb) +
+            data = ann_text2_cbi) +
   theme_bw() +
+  # scale_x_continuous(limits = x_lims_coef) +
   theme(legend.position = "none",
         strip.background = element_blank(),
         axis.ticks.y = element_blank(),
@@ -1552,38 +1719,35 @@ meta_coef_surveys_cb <- meta_surveys1_cb %>%
   xlab(NULL) +
   ylab(NULL)
 
-(dist_surveys_cb | meta_coef_surveys_cb) +
-  plot_annotation(title = paste0("Variation in the Gender Gap in Perceptions of Benefits\nvs Costs of Mitigation by Economic Development in\n",
+dist_surveys_cbi + meta_coef_surveys_cbi +
+  plot_annotation(title = paste0("Economic Development and Perception of Benefits vs Costs by Gender",
+                                 " in\n",
                                 n_items |>
                                   filter(item_category == "cost-benefit" & n_country >= 10) |>
                                   nrow(),
                                 " Cross-National Studies"),
                   subtitle = "Coefficients for the Interaction of Gender and Logged GDP/Capita")
-                  # caption = "Notes: Estimates of Equation 1.",
-                  # theme = theme(plot.caption =
-                  #                 ggtext::element_textbox_simple()))
 ```
 
-For the present work, `r n_items |> filter(item_category == "cost-benefit" & n_country >= 10) |> pull(survey2) |> n_distinct()` cross-national surveys were identified that include one or more items that tap perceptions of the costs, benefits, or both of climate change mitigation that were asked in ten or more countries (details are presented in the supplemental materials).
-For example, the 2022 Risks That Matter survey [@OECD2023] asked how much concern respondents felt regarding "rising energy/fuel costs" due to "building up green infrastructure, emissions limits and carbon taxes," while Eurobarometer 95.1 asked respondents their agreement with the statement, "The costs of the damages due to climate change are much higher than the costs of the investments needed for a green transition" [@EC2023].
-As in the earlier examination of climate concern, multiple items in these cross-national surveys are each analysed as a separate study (all survey questions on the costs and benefits of mitigation are listed in the supplemental materials).
-This yields `r n_items |> filter(item_category == "cost-benefit" & n_country >= 10) |> nrow()` studies in all.
+@fig-benefit displays the results for the conditional effects of logged GDP/capita.
+They contradict the explanation proposed by @Bush2023.
+Neither men nor women in richer countries consistently express less perceived benefits or higher costs than their counterparts in poorer countries; to the contrary, in both cases over 90% of the posterior probability distribution is positive.
+Given the greater concern for climate change among those living in richer countries seen in @fig-cca_gdppc, it is perhaps not surprising that those in richer countries hold a more favorable perception of the tradeoffs involved in mitigating the problem as well.
 
-For each study, the _z_-transformed correlation between the dichotomous gender variable and perceptions of benefits versus costs was calculated.
-These correlations are plotted against logged GDP/capita in the left panel of @fig-benefit.
+A positive relationship between the context of economic development and both women's and men's perceptions of these tradeoffs does not necessitate that women's and men's perceptions do not diverge from each other to a greater extent in richer countries than in poorer ones.
+Still, the evidence from the studies generated with this collection of survey-items suggests that this too is the case.
+The left panel of @fig-benefit2 shows that only in four of the `r n_items |> filter(item_category == "cost-benefit" & n_country >= 10) |> nrow()` studies provide support for Bush and Clayton's [-@Bush2023] claim that the gender gap in perceptions of climate mitigation's costs and benefits is wider at higher levels of economic development, while six studies actually indicate statistically significant declines in the gender gap.
+The right panel displays the results of a meta-analysis of all of these studies, again with varying intercepts for each survey and item: less than half of the posterior probability distribution of the meta-analysis coefficient of the interaction of gender and logged GDP/capita is positive, and its median is very close to zero.
+There is no support for the assertion that men are especially sensitive to the context of economic development in their perceptions of the costs and benefits of fighting climate change.
 
-The result contradicts the explanation proposed by @Bush2023 for the diverging levels of concern by gender in richer countries.
-Correlations of gender with perceptions of the benefits versus costs of mitigation appear flat (if not declining) and very nearly zero on average over the entire observed range of economic development.
-This is confirmed in a meta-regression with varying intercepts for each country, survey, and item: only a third of the posterior for the coefficient for logged GDP/capita is positive, and its median is very close to zero.
-
-But if the differences between women and men in richer countries cannot be explained with diverging perceptions of the costs and benefits of climate change mitigation, then how can they be explained?
-The next section offers an answer: traditional masculity norms of fearlessness.
+<!-- But if the differences between women and men in richer countries cannot be explained with diverging perceptions of the costs and benefits of climate change mitigation, then how can they be explained? -->
+<!-- The next section offers an answer: traditional masculinity norms of fearlessness. -->
 
 # Conclusions
 Heeding the long-standing admonition to maximize the evidence employed to test our theories [see, e.g., @King1994], this reassessment tested the three claims put forward by a prominent recent work, @Bush2023, on gender and climate change concern with meta-analyses of a collection of cross-national surveys many times larger than the three examined in that article.
-The first claim, that differences between men and women in climate change concern are larger in richer countries, is supported across the thousands of studies presented here.
+The first claim, that differences between men and women in climate change concern are larger in richer countries, is supported across the hundreds of studies presented here.
 But, contrary to the second claim and consistent with postmaterialist theory, this additional evidence indicates that levels of climate change concern are _higher_, not lower, for both men and women in richer countries.
-The third claim, that in richer countries men see more costs and fewer benefits than women in climate change mitigation, finds no support in the available surveys.
+The third claim, that in richer countries men see increasingly more costs and fewer benefits than women in climate change mitigation, finds no support in the available surveys.
 
 These findings have several important implications.
 The first is that research on the political consequences of gender should engage more thoroughly with the burgeoning scholarship on masculinities.
@@ -1603,9 +1767,9 @@ Likewise, appealing directly to traditional masculinity's norms of paternalism, 
 While either such approach would no doubt frustrate those of us who are eager to simply move beyond the irrational limitations currently imposed on societies by widespread traditional masculinity norms, the urgency with which climate change must now be addressed counsels taking an 'all of the above' approach to building public support for decarbonization.
 
 A final implication of this work is methodological, and it has broad applicability to studies of public opinion.
-It is that meta-analysis is more than simply a method for reviewing a well-developed literature; it is also a means of maximizing the evidence brought to bear on even novel questions of interest. 
+It is that meta-analysis is more than simply a method for reviewing a well-developed literature; it is also a means of maximizing the evidence brought to bear on even novel questions of interest []. 
 The growing availability of both cross-national survey datasets [see, e.g., @Smith2015] and tools to programmatically wrangle them [see, e.g., @Solt2019b] mean that data constraints alone rarely justify drawing on only one or a few surveys.
-After a larger body of relevant data is identified, meta-analysis provides a straightforward method for incorporating it into a single coherent investigation.
+After a larger body of relevant data is identified, original meta-analysis provides a straightforward method for incorporating it into a single coherent investigation.
 Our understanding of political phenomena will benefit greatly if we make more use of it.
 
 \pagebreak
@@ -1854,272 +2018,52 @@ read_csv(here::here("data-raw",
   kableExtra::footnote(symbol = "Survey dataset codes correspond to those used in the DCPOtools R package (Solt, Hu, and Tai 2019).")
 ```
 
-
-# Meta-Regression Results (Needs Revision)
-
-```{r meta-analyses}
-cca_by_country <- rio::import(here::here("data",
-                                         "cca_by_country.rds"),
-                              trust = TRUE)
-
-risk_by_country <- rio::import(here("data",
-                                    "risk_by_country.rds"))
-
-concern_m1 <- cca_by_country %>%
-  filter(item_category == "concern") %>% 
-  brm(bf(z_r | se(se_zr) ~ 
-           log_gdppc +
-           (1 |country + survey2 + item)),
-      data = .,
-      cores = 4,
-      iter = 800,
-      backend = "cmdstanr",
-      control = list(adapt_delta = 0.99, 
-                     max_treedepth = 20),
-      file = here("data", "concern_m1"))
-
-benefit_cost_m1 <- cca_by_country %>%
-  filter(str_detect(item_category, "cost|benefit") & !is.na(gdppc)) %>%
-  brm(bf(z_r | se(se_zr) ~
-           log_gdppc +
-           (1 |country + survey2 + item)),
-      data = .,
-      cores = 4,
-      iter = 2000,
-      backend = "cmdstanr",
-      control = list(adapt_delta = 0.99, 
-                     max_treedepth = 20),
-      file = here("data", "benefit_cost_m1"))
-
-risk_m1 <- risk_by_country %>%
-  brm(bf(z_r | se(se_zr) ~ 
-           log_gdppc +
-           (1 |country + survey2 + item)),
-      data = .,
-      cores = 4,
-      iter = 800,
-      backend = "cmdstanr",
-      control = list(adapt_delta = 0.99, 
-                     max_treedepth = 20),
-      file = here("data", "risk_m1"))
-```
-
-```{r n_c}
-n_ns_c <- cca_by_country %>%
-  filter(str_detect(item_category, "concern")) %>% 
-  distinct(country, year, survey2) %>% 
-  nrow() %>%
-  format(big.mark = ",", scientific = FALSE)
-
-n_nsi_c <- cca_by_country %>%
-  filter(str_detect(item_category, "concern")) %>% 
-  distinct(country, year, survey2, item) %>% 
-  nrow() %>%
-  format(big.mark = ",", scientific = FALSE)
-
-```
-
-
-To assess whether the difference between women and men in climate change concern is larger in richer countries than in poorer ones, the available cross-national surveys on climate concern are broken into their separate national components, yielding a total of `r n_ns_c` national surveys.
-These surveys often include multiple items tapping concern for climate change and thus provide multiple opportunities to observe the relationship between gender and climate concern; there are `r n_nsi_c` of these opportunities in total.
-In the language of meta-analysis, the analysis realized from each of these opportunities is a study.
-Correlation coefficients are frequently used in meta-analysis to bring results from different and otherwise incomparable analyses onto a common scale; they are also equivalent to the simple regressions at the individual level of the main models of @Bush2023 [, 593, Table 1, Models 1 and 4].
-Because the sampling distribution of correlations is skewed, the Fisher's _z_ transformation is applied to each correlation to yield a normal distribution of effect sizes [see @Schmid2020a, 35; @Godefroidt2023, 25].
-Therefore, each study here consists of the _z_-transformed correlation of the individual-level indicator variable for a woman respondent with one survey item of climate concern in one country-year.
-
-```{r, cache=FALSE}
-#| label: fig-concern-country
-#| fig-cap: "The Difference Between Women and Men in Climate Concern Is Generally Larger in Richer Countries Than in Poorer Countries"
-#| fig-height: 4
-
-c_plot <- cca_by_country %>%
-  filter(str_detect(item_category, "concern")) %>%
-  mutate(dv = case_when(str_detect(item_category, "concern") ~
-                          "Correlation of Women\n& Climate Change Concern")) %>% 
-  ggplot(aes(x = log_gdppc, y = z_r)) +
-  facet_wrap(dv ~ .,
-             ncol = 1,
-             strip.position = "left") +
-  geom_segment(aes(x = log_gdppc, xend = log_gdppc,
-                   y = z_r - 1.96*se_zr, yend = z_r + 1.96*se_zr),
-               na.rm = TRUE,
-               alpha = .05) +
-  geom_point(size = 1, alpha = .05) +
-  geom_smooth(method = 'lm',
-              formula = 'y ~ x',
-              se = FALSE) +
-  theme_bw() +
-  theme(legend.position="none",
-        axis.text  = element_text(size = 10),
-        axis.title = element_text(size = 11),
-        strip.background = element_blank(),
-        strip.placement = "outside",
-        plot.subtitle = element_text(hjust = 0.5)) +
-  scale_x_continuous(breaks=seq(6, 12, by = 1)) +
-  scale_y_continuous(limits=c(-.4, .4),
-                     breaks=seq(-.4, .4, by = .2)) +
-  labs(subtitle = "Climate Change Concern\nAcross National Surveys",
-       x = "Logged GDP/Capita",
-       y = NULL)
-
-c_coef_plot <- spread_draws(concern_m1, b_log_gdppc) %>% 
-  mutate(dv = "Correlation Between Women\nand Climate Change Concern") %>% 
-  ggplot(aes(x = b_log_gdppc)) +
-  stat_halfeye(aes(fill = after_stat(x < 0))) +
-  facet_wrap(dv ~ ., 
-             ncol = 1,
-             strip.position = "left") +
-  geom_vline(xintercept = 0,
-             colour = "grey60",
-             linetype = 2) +
-  theme_bw() +
-  theme(legend.position = "none",
-        strip.background = element_blank(),
-        axis.ticks.y = element_blank(),
-        axis.text.y = element_blank(),
-        strip.text = element_blank(),
-        strip.placement = "left",
-        plot.subtitle = element_text(hjust = 0.5)) +
-  scale_fill_manual(breaks = c(TRUE, FALSE),
-                    values = c("grey60", "grey45")) +
-  scale_color_manual(breaks = c(TRUE, FALSE),
-                     values = c("grey60", "grey45")) +
-  labs(subtitle = "Meta-Regression Coefficient\nfor Logged GDP/Capita",
-       x = NULL,
-       y = NULL)
-
-(c_plot | c_coef_plot) +
-  plot_annotation(title = paste("Gender and Climate Change Concern in",
-                                n_ns_c,
-                                "National Surveys\nby Level of Economic Development"),
-                  subtitle = "Assessing Gender Differences by GDP/Capita",
-                  caption = paste("Notes: The left panel shows a scatterplot of the correlation between an indicator variable for a woman respondent and concern for climate change against GDP/capita; each observation represents one climate-change item in a single national survey. The right panels report the results of a four-level meta-regression of these observations with varying intercepts for country, item, and survey project-wave; _n_ =",
-                  n_nsi_c,
-                  "survey-item-country-years."),
-                  theme = theme(plot.caption =
-                                  ggtext::element_textbox_simple()))
-```
-
-These studies are plotted in the left panel of @fig-concern.
-The correlation between respondents' gender and their climate concern expressed in a single survey item appears on the _y_-axis; the vertical whiskers on each point represent uncertainty in the correlation due to sampling error.
-The economic development of the country at the time of the survey, measured as in @Bush2023 as the log of GDP/capita, is on the _x_-axis.
-
-Analyses that seek to explain differences across studies---here, the differences in the observed correlations between gender and climate concern survey items---are known as meta-regressions [see @Higgins2020].
-The right panel of @fig-concern presents the results of a meta-regression of these correlations on economic development.
-This meta-regression takes into account the lack of independence across studies with a Bayesian multilevel model with varying intercepts for each country, survey, and item.
-Using a Bayesian approach allows the uncertainty in the correlations due to sampling error to be seamlessly incorporated into the model; the varying intercepts work to minimize the possibility that other particularities of the country, survey, or item of a study are not conflated with the context of economic development in which the study took place.
-
-
-
-
-### Risk
-
-```{r}
-#| label: tbl-risk
-
-read_csv(here::here("data-raw",
-                    "surveys_risk.csv"),
-         col_types = "ccccccccc") %>%
-  # filter(item_category == "concern" & survey!="amb_combo") %>% 
-  transmute(Survey = if_else(str_detect(survey, "amb_"),
-                           str_replace(survey, "amb_.*(\\d{4})", "amb\\1"),
-                           survey),
-            `Survey\nItem\nCode` = item,
-            `Question Text` = question_text,
-            `Response Categories` = str_to_lower(response_categories) %>% 
-              str_replace("\\bi\\b", "I")) %>% 
-  distinct() %>% 
-  modelsummary::datasummary_df(output = "kableExtra",
-                               longtable = TRUE,
-                               title = "Other Concern Survey Items") %>%
-  kableExtra::column_spec(1, width = "7em") %>%
-  kableExtra::column_spec(2, width = "14em") %>%
-  kableExtra::column_spec(3, width = "20em") %>%
-  kableExtra::column_spec(4, width = "14em") %>%
-  kableExtra::kable_styling(font_size = 7) %>%
-  kableExtra::kable_styling(latex_options = "repeat_header") %>%
-  kableExtra::kable_styling(latex_options = "striped") %>%
-  kableExtra::footnote(symbol = "Survey dataset codes correspond to those used in the DCPOtools R package (Solt, Hu, and Tai 2019).")
-```
-
-
-```{r surveyInfo, eval=FALSE}
-# dcpo_input_raw1 %>%
-#   dplyr::select(country, year, item, survey) %>%
-#   distinct() %>%
-#   separate(survey, c("surv1", "surv2", "surv3"), sep=", ", fill = "left") %>%
-#   pivot_longer(cols = starts_with("surv"), values_to = "survey") %>%
-#   mutate(str_trim(survey)) %>% 
-#   filter(!is.na(survey)) %>% 
-#   select(survey) %>% 
-#   distinct() %>% 
-#   left_join(surveys_data %>% 
-#               select(survey, citation),
-#             by = join_by(survey)) %>%
-#   arrange(survey) %>% 
-#   transmute(`Survey Dataset Code*` = survey %>% 
-#               str_replace_all(fixed("_"), "\\_"),
-#             `Citation` = citation %>% 
-#               str_replace_all("#", "No.") %>% 
-#               str_replace_all("&", "and") %>% 
-#               str_replace_all(fixed("_"), "\\_")) %>%
-#   modelsummary::datasummary_df(output = "kableExtra",
-#                                longtable = TRUE,
-#                                title = "Source Survey Information") %>%
-#   kableExtra::kable_styling(latex_options = "repeat_header") %>%
-#   kableExtra::kable_styling(latex_options = "striped") %>%
-#   kableExtra::column_spec(1, width = "12em") %>%
-#   kableExtra::column_spec(2, width = "60em") %>%
-#   kableExtra::kable_styling(font_size = 7) %>%
-#   kableExtra::footnote(symbol = "Survey dataset codes correspond to those used in the DCPOtools R package (Solt, Hu, and Tai 2019).")
-```
-
 \clearpage
 \pagebreak
-# Meta-Regression Tabular Results
-\clearpage
+<!-- # Meta-Regression Tabular Results -->
+<!-- \clearpage -->
 
-```{r}
-#| label: tbl-models
-#| tbl-cap: "Meta-Regression Tabular Results"
-#| cache: false
+<!-- ```{r} -->
+<!-- #| label: tbl-models -->
+<!-- #| tbl-cap: "Meta-Regression Tabular Results" -->
+<!-- #| cache: false -->
 
-models <- concern_m1 %>% 
-  tidybayes::summarise_draws() %>% 
-  select(variable, median, sd) %>% 
-  filter(str_detect(variable, "^b_")) %>% 
-  transmute(var = if_else(variable == "b_log_gdppc", "Logged GDP/capita", "Intercept"),
-            Median = round(median, 3),
-            SD = round(sd, 3),
-            DV = "concern") %>% 
-  bind_rows(benefit_cost_m1 %>% 
-  tidybayes::summarise_draws() %>% 
-  select(variable, median, sd) %>% 
-  filter(str_detect(variable, "^b_")) %>% 
-  transmute(var = if_else(variable == "b_log_gdppc", "Logged GDP/capita", "Intercept"),
-            Median = round(median, 3),
-            SD = round(sd, 3),
-            DV = "benefit"),
-  risk_m1 %>% 
-  tidybayes::summarise_draws() %>% 
-  select(variable, median, sd) %>% 
-  filter(str_detect(variable, "^b_")) %>% 
-  transmute(var = if_else(variable == "b_log_gdppc", "Logged GDP/capita", "Intercept"),
-            Median = round(median, 3),
-            SD = round(sd, 3),
-            DV = "risk")) %>% 
-  pivot_wider(names_from = DV, 
-              values_from = c(Median, SD),
-              names_vary = "slowest")
+<!-- models <- concern_m1 %>%  -->
+<!--   tidybayes::summarise_draws() %>%  -->
+<!--   select(variable, median, sd) %>%  -->
+<!--   filter(str_detect(variable, "^b_")) %>%  -->
+<!--   transmute(var = if_else(variable == "b_log_gdppc", "Logged GDP/capita", "Intercept"), -->
+<!--             Median = round(median, 3), -->
+<!--             SD = round(sd, 3), -->
+<!--             DV = "concern") %>%  -->
+<!--   bind_rows(benefit_cost_m1 %>%  -->
+<!--   tidybayes::summarise_draws() %>%  -->
+<!--   select(variable, median, sd) %>%  -->
+<!--   filter(str_detect(variable, "^b_")) %>%  -->
+<!--   transmute(var = if_else(variable == "b_log_gdppc", "Logged GDP/capita", "Intercept"), -->
+<!--             Median = round(median, 3), -->
+<!--             SD = round(sd, 3), -->
+<!--             DV = "benefit"), -->
+<!--   risk_m1 %>%  -->
+<!--   tidybayes::summarise_draws() %>%  -->
+<!--   select(variable, median, sd) %>%  -->
+<!--   filter(str_detect(variable, "^b_")) %>%  -->
+<!--   transmute(var = if_else(variable == "b_log_gdppc", "Logged GDP/capita", "Intercept"), -->
+<!--             Median = round(median, 3), -->
+<!--             SD = round(sd, 3), -->
+<!--             DV = "risk")) %>%  -->
+<!--   pivot_wider(names_from = DV,  -->
+<!--               values_from = c(Median, SD), -->
+<!--               names_vary = "slowest") -->
 
-colnames(models) <- c(" ", rep(c("Median", "SD"), 3))
+<!-- colnames(models) <- c(" ", rep(c("Median", "SD"), 3)) -->
 
-tt(models) %>% 
-  group_tt(j = list(
-    "Climate Concern" = 2:3,
-    "Benefits vs Costs" = 4:5,
-    "Across Risks" = 6:7))
-```
+<!-- tt(models) %>%  -->
+<!--   group_tt(j = list( -->
+<!--     "Climate Concern" = 2:3, -->
+<!--     "Benefits vs Costs" = 4:5, -->
+<!--     "Across Risks" = 6:7)) -->
+<!-- ``` -->
 
 # Economic Development and Masculinity Norms
 
@@ -2135,7 +2079,7 @@ Whether the norm of masculine fearlessness and dismissal of risk follows the sam
 ```{r}
 #| label: fig-risk
 #| fig-cap: "In Richer Countries, Women Generally Express More Concern Than Men _Regardless of the Source of Risk_"
-#| fig-height: 4
+#| fig-height: 4.25
 
 risk_by_country <- rio::import(here("data",
                                    "risk_by_country.rds"),
@@ -2219,6 +2163,38 @@ This provides more than ten thousand individual studies of concern.
 
 @fig-risk shows that gender differences in concern across all of these risks are greater in richer countries.
 This finding supports the argument that the pattern in climate change concern identified in @Bush2023 and further strengthened by @fig-concern above is the product of a norm of masculine performative fearlessness that is more widespread where levels of economic development are higher.
+
+### Risk Survey Items
+
+```{r}
+#| label: tbl-risk
+
+read_csv(here::here("data-raw",
+                    "surveys_risk.csv"),
+         col_types = "ccccccccc") %>%
+  # filter(item_category == "concern" & survey!="amb_combo") %>% 
+  transmute(Survey = if_else(str_detect(survey, "amb_"),
+                           str_replace(survey, "amb_.*(\\d{4})", "amb\\1"),
+                           survey),
+            `Survey\nItem\nCode` = item,
+            `Question Text` = question_text,
+            `Response Categories` = str_to_lower(response_categories) %>% 
+              str_replace("\\bi\\b", "I")) %>% 
+  distinct() %>% 
+  modelsummary::datasummary_df(output = "kableExtra",
+                               longtable = TRUE,
+                               title = "Other Concern Survey Items") %>%
+  kableExtra::column_spec(1, width = "7em") %>%
+  kableExtra::column_spec(2, width = "14em") %>%
+  kableExtra::column_spec(3, width = "20em") %>%
+  kableExtra::column_spec(4, width = "14em") %>%
+  kableExtra::kable_styling(font_size = 7) %>%
+  kableExtra::kable_styling(latex_options = "repeat_header") %>%
+  kableExtra::kable_styling(latex_options = "striped") %>%
+  kableExtra::footnote(symbol = "Survey dataset codes correspond to those used in the DCPOtools R package (Solt, Hu, and Tai 2019).")
+```
+
+
 
 
 # References {.unnumbered}
