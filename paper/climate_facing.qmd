@@ -4,6 +4,8 @@ format:
     number-sections: true
     papersize: a4
     keep-tex: false
+    # include-in-header:
+    #   - text: \usepackage{etoc}
     # thanks: ""
 citeproc: false # to make multibib and wordcount work
 filters:
@@ -1225,7 +1227,7 @@ meta_coef_surveys_fxg <- meta_surveys1_fxg %>%
   ylab(NULL)
 
 (dist_surveys_fxg | meta_coef_surveys_fxg) +
-  plot_annotation(title = paste("Variation in the Climate Gender Gap by Economic Development in\n",
+  plot_annotation(title = paste("Variation in the Climate Concern Gender Gap by\nEconomic Development in",
                                 n_items |>
                                   filter(item_category == "concern" & n_country >= 10) |>
                                   nrow(),
@@ -1756,12 +1758,12 @@ There is no support for the assertion that men are especially sensitive to the c
 Heeding the long-standing admonition to maximize the evidence employed to test our theories [see, e.g., @King1994], this reassessment tested the three claims put forward by a prominent recent work, @Bush2023, on gender and climate change concern with single-paper meta-analyses of a collection of cross-national surveys many times larger than the three examined in that article.
 The first claim, that differences between men and women in climate change concern are larger in richer countries, is supported across the hundreds of studies presented here.
 But, contrary to the second claim and consistent with postmaterialist theory, this additional evidence indicates that levels of climate change concern are _higher_, not lower, for both men and women in richer countries.
-The third claim, that in richer countries men increasingly see more costs and fewer benefits than women in climate change mitigation, finds no support in the available surveys.
+The third claim, that in richer countries men increasingly see more costs and fewer benefits than women in climate change mitigation, finds no support in the entirety of the available evidence.
 
 These findings have several important implications.
-One is that further research is required to explain the pattern of larger differences in climate change concern by gender in richer countries proposed by @Bush2023 and supported by the evidence presented here.
+One is that further research is required to explain the pattern of larger differences in climate change concern by gender in richer countries proposed by @Bush2023 and reinforced by the evidence presented here.
 As the gender gap in perceptions of costs and benefits is not larger in more economically developed countries, the argument that these perceptions drive this pattern through motivated reasoning does not have support in the available survey data.
-The fact that this pattern, in which men express increasingly lower levels of concern than women where economic development is greater, is not constrained to the threat of climate change should be a further spur to new theorizing on this topic: an additional meta-analysis, presented in SM @sec-others, shows that this pattern holds in a sample spanning a wide range of other potential problems, ranging from crime and job loss to eating a balanced diet and roadway accidents.
+The fact that this pattern, in which men express increasingly lower levels of concern relative to women where economic development is greater, is not constrained to the threat of climate change should be a further spur to new theorizing on this topic: an additional meta-analysis, presented in SM @sec-others, shows that this pattern holds in a sample spanning a wide range of other potential problems, ranging from crime and job loss to eating a balanced diet and roadway accidents.
 One potential explanation meriting further exploration is that masculine norms of fearlessness---that men’s awareness of a given threat notwithstanding, they are expected to downplay its severity, and their conformity to these expectations are rewarded with respect [see, e.g., @Thomson2020, 150-151]---are, like other norms of dominance masculinity, more prevalent in richer countries [see @DeHaas2025, 12].
 <!-- Another is that the advantages men enjoy -->
 
@@ -1819,7 +1821,6 @@ Supplementary Materials
 \end{center}
 ```
 
-\listoftables
 
 # Data Collection and Coding {#sec-collection}
 
@@ -1995,6 +1996,9 @@ read_csv(here::here("data-raw",
   kableExtra::footnote(symbol = "Survey dataset codes correspond to those used in the DCPOtools R package (Solt, Hu, and Tai 2019).")
 ```
 
+\newpage
+\pagebreak
+
 ```{r}
 #| label: tbl-cb
 
@@ -2160,7 +2164,7 @@ c_coef_plot <- spread_draws(concern_m1, b_log_gdppc) %>%
 
 The parallel analysis of the gender gap in perceptions of benefits vs costs of climate mitigation is presented in @fig-benefit-country.
 Like @fig-benefit in the main text, the median of the posterior probability distribution is very near to zero and, contrary to the theory developed in @Bush2023, actually negative.
-The increased power of the meta-regression confirms that any non-zero influence of economic development on gender differences in the perceived benefits and costs of fighting climate change is negligible.
+The increased power of the meta-regression confirms that any non-zero influence of economic development on gender differences in the perceived benefits and costs of fighting climate change is so small as to be negligible.
 
 ```{r}
 #| label: fig-benefit-country
@@ -2250,7 +2254,7 @@ These items asked respondents the extent of the worry or concern they felt or to
 This collection of cross-national surveys includes 239 different survey items.
 The dozen most frequent topics of potential concern are crime, job loss, drinking water contamination, terrorism, food safety, mental health, extreme weather, immigration, contagious diseases, government corruption, identity theft, war, public schools, and roadway accidents, but the topics covered also include such topics as police abuses, globalization, energy dependence, social discrimination, and eating a balanced diet.
 For this purpose, as in @sec-power, the cross-national surveys are divided into their component national surveys and multiple items from a single survey are treated separately.
-This provides more than ten thousand individual studies of concern, each a Fisher's-_z_transformed correlation between the indicator for women and item of concern; these studies become the observations in a Bayesian multilevel model and predicted with logged GDP/capita.
+This provides more than ten thousand individual studies of concern, each a Fisher's _z_ transformed correlation between the indicator for women and item of concern; these studies become the observations in a Bayesian multilevel model and predicted with logged GDP/capita.
 @fig-risk shows that gender differences in concern across all of these risks are greater in richer countries, suggesting that climate change is not in fact a distinctive threat and further undermining the possibility that perceptions of the benefits and costs of changing carbon-intensive male lifestyles are driving gendered differences in climate concern.
 
 ```{r}
