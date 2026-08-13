@@ -72,7 +72,7 @@ With the increasingly pressing need to address climate change comes a similar ne
 
 \textbf{Keywords:} Climate change, public opinion, meta-analysis
 
-\textbf{Word Count:} 4794
+\textbf{Word Count:} 6613
 \end{abstract}
 
 ```
@@ -1092,11 +1092,11 @@ Meta-analysis supplies a different approach to resolving these complications.
 Meta-analysis is a tool to "consolidate the overall effect size" from many analyses [@Godefroidt2023, 25].
 Meta-analysis has not been frequently employed in political science until recently---@Arel-Bundock2026 [, 38] counts just 85 articles employing the method across 141 journals in political science and closely adjacent fields through 2021---but it is growing increasingly common in the discipline [see, e.g., @Koczynska2025; @Weber2025; @Barcelo2026].
 With good reason: incorporating the evidence provided by many studies, meta-analysis provides a means to resolve discrepancies and come to conclusions grounded in all of the available evidence.
-Moreover, meta-analysis yields the same results as a properly-specified pooled model of the original individual-level data (when assessing an existing literature also known as a 'meta re-analysis' or a 'mega-analysis') while being more straightforward to implement and interpret [see, e.g., @Stahlmann2026, 548-549; @Burke2017, 855].^[
+Moreover, meta-analysis yields the same results as a properly-specified pooled model of the original individual-level data (when assessing an existing literature also known as a 'meta re-analysis' or a 'mega-analysis') while being more straightforward to implement and interpret [see, e.g., @Burke2017, 855; @Stahlmann2026, 548-549].^[
 These works note that meta-reanalysis does have important advantages over standard meta-analytic techniques, including the opportunity to respecify and standardize published analyses, to maximize statistical power when sample sizes are small, and to mitigate selective reporting and publication bias [see also, e.g., @Graham2026; @Sarkar2026].
 Meta-analyses of original analyses, however, share these advantages.]
 
-Although typically the analyses to be consolidated have already been published in many different articles [see, e.g., @Schmid2020a], one can also conduct meta-analysis to cumulate the evidence provided by one's own original analyses within the same manuscript, a procedure that @Goh2016 labels a 'mini meta-analysis' and @McShane2017 calls a 'single-paper meta-analysis (SPM).'
+Although typically the analyses to be consolidated have already been published in many different articles [see, e.g., @Schmid2020a], one can also conduct meta-analysis to cumulate the evidence provided by one's own original analyses within the same manuscript, a procedure that @Goh2016 labels a "mini meta-analysis" and @McShane2017 calls a "single-paper meta-analysis (SPM)."
 Political scientists have recently begun to take advantage of this latter technique.
 @Perez2024 presents a mini meta-analysis of five original experiments on solidarity among people of color that vary the ethnic group of the sample and treatment, and @Gazmararian2026 uses meta-analysis to summarize the results of four separate multilevel models of different climate shocks' effects on the likelihood that respondents to the 2019 World Risk Poll considered climate change to be among the top two risks to their safety in their daily lives.
 @Perez2025 analyses data from each of seven surveys on the relationship between individuals' prioritization of racial or American identification and their partisanship that operationalized the former concept differently, presents the results of each of these separate analyses, and offers a mini meta-analysis that combines those results.
@@ -2261,8 +2261,8 @@ Tests of the argument that support for climate policy should be lower in richer 
 These findings have several important implications.
 One is that further research is needed to better understand the sources of climate change attitudes---concern about climate change, perceptions of the benefits and costs of addressing it, and support for climate policy---as well as their interrelationships.
 For one example, the origins of the pattern of larger differences in climate change concern by gender in richer countries proposed by @Bush2023 and reinforced by the evidence presented here remain unclear.
-This same pattern exists in a more muted form in support for climate policies, but as gender gaps in perceptions of costs and benefits are _not_ larger in more economically developed countries if they exist at all, the @Bush2023 argument that it is these perceptions that drive this pattern is not supported in the available evidence.
-Examining these interrelationships in more detail is beyond the scope of this reassessment, but that over two dozen cross-national surveys include items tapping at least two of these three concepts provides the basis for one possible route forward.
+This same pattern exists in a more muted form in support for climate policies, but as gender gaps in perceptions of costs and benefits if they exist are _not_ consistently larger in more economically developed countries, the @Bush2023 argument that it is these perceptions that drive this pattern is not supported in the available evidence, and the article's theory that support for fighting climate change is lowest among those with the most to lose is not supported at all.
+Explaining the interrelationships among these attitudes in more detail is beyond the scope of this reassessment, but that over two dozen cross-national surveys include items tapping at least two of these three concepts provides the basis for one possible route forward.
 
 <!-- Also inviting theorizing is the fact that the pattern observed here, in which men express increasingly lower levels of concern relative to women where economic development is greater, is not constrained to the threat of climate change should be a further spur to new theorizing on this topic: an additional meta-analysis, presented in SM @sec-others, shows that this pattern holds in a sample spanning a wide range of other potential problems, ranging from crime and job loss to eating a balanced diet and roadway accidents. -->
 <!-- One potential explanation meriting further exploration is that masculine norms of fearlessness---that men’s awareness of a given threat notwithstanding, they are expected to downplay its severity, and their conformity to these expectations are rewarded with respect [see, e.g., @Thomson2020, 150-151]---are, like other norms of dominance masculinity, more prevalent in richer countries [see @DeHaas2025, 12]. -->
@@ -2277,7 +2277,7 @@ In any case, and in light of the urgency with which climate change must now be a
 A final implication of this work is methodological, and it has broad applicability to studies of public opinion.
 It is that meta-analysis is more than simply a method for reviewing a well-developed literature; it is also a means of maximizing the evidence brought to bear on even novel questions of interest. 
 The growing availability of both cross-national survey datasets [see, e.g., @Smith2015] and tools to programmatically wrangle them [see, e.g., @Solt2019b] mean that data constraints alone rarely justify drawing on only one or a few surveys.
-After a more complete body of relevant data is identified, large-scale single-paper meta-analysis provides a straightforward method for incorporating it into a single coherent investigation.
+After a more comprehensive body of relevant data is identified, large-scale single-paper meta-analysis provides a straightforward method for incorporating it into a single coherent investigation.
 Our understanding of political phenomena will benefit greatly if we make more use of it.
 
 \pagebreak
