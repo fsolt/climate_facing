@@ -56,12 +56,14 @@ digraph flowchart {
             
       all1 [label = "Survey-items identified from:\n —DCPOtools codebooks search (n = 406)\l —Survey archives searches (n = 15)\l —Web searches (n = 62)\l"];
       all2 [label = "Survey-items assessed for\nrelevance (n = 483)"];
-      incl0 [label = "Survey-items assessed for\neligibility (n = 332)"];
-      incl [label = "Survey-items included in\nstudy (n = 328)"];
-      excl [label = "Survey-items excluded (total n = 151):\n —policy preferences (n = 80)\l —individual behavior, interest, efficacy (n = 49)\l —beliefs regarding cause (n = 22)\l"];
+      incl0 [label = "Survey-items assessed for\neligibility (n = 412)"];
+      incl [label = "Survey-items included in\nstudy (n = 408)"];
+      excl [label = "Survey-items excluded (total n = 71):\n —individual behavior, interest, efficacy (n = 49)\l —beliefs regarding cause (n = 22)\l"];
       small [label = "Survey-items excluded for\nincluding fewer than\nten countries (n = 4)"];
       concern [label = "Survey-items on concern\nincluded in analysis\n(n = 265)", width = 2.8];
       cost [label = "Survey-items on costs and/or\nbenefits included in analysis\n(n = 63)", width = 2.8];
+      policy [label = "Survey-items on support for
+policies included in analysis\n(n = 80)", width = 2.8];
       
       # edge definitions with the node IDs
       all1 -> all2;
@@ -71,6 +73,7 @@ digraph flowchart {
       incl0 -> incl;
       incl -> concern;
       incl -> cost [constraint = false];
+      incl -> policy [constraint = false];
       
       I0 -> S0 -> S1 -> C0 [style = invis, weight = 10]
 
@@ -82,6 +85,6 @@ digraph flowchart {
         rank = same; incl0; small;
       }
       subgraph {
-        rank = same; concern; cost;
+        rank = same; concern; cost; policy;
       }
 }
